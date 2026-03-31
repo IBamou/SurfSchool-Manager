@@ -264,3 +264,7 @@ main {
 .inline-form {
     display: inline;
 }
+
+.page-content {
+    padding: 2rem 0;
+}

@@ -51,11 +51,22 @@
 
                 <div class="form-actions">
                     <a href="<?= $baseUrl ?>/students/<?= $student['id'] ?>" class="btn-back">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Update Level</button>
+                    <button type="submit" class="btn btn-primary" disabled>Update Level</button>
                 </div>
             </form>
         </div>
     </main>
+
+    <script>
+        const form = document.querySelector('form');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const levelSelect = document.getElementById('level');
+        const originalValue = levelSelect.value;
+
+        levelSelect.addEventListener('change', function() {
+            submitBtn.disabled = (this.value === originalValue);
+        });
+    </script>
 </body>
 
 </html>

@@ -7,187 +7,6 @@
     <title><?= htmlspecialchars($student['name'] ?? 'Student') ?> - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/students.css">
-    <style>
-        .student-detail-card {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 40px var(--shadow);
-        }
-
-        .student-header {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .student-avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--ocean-blue), var(--ocean-light));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-        }
-
-        .student-info h1 {
-            font-size: 1.75rem;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .student-email {
-            color: var(--text-gray);
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .enrolled-section {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 40px var(--shadow);
-        }
-
-        .enrolled-section h2 {
-            font-size: 1.5rem;
-            color: var(--text-dark);
-            margin-bottom: 1.5rem;
-        }
-
-        .sessions-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .sessions-table th,
-        .sessions-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .sessions-table th {
-            font-weight: 600;
-            color: var(--text-gray);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-
-        .session-title {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .session-datetime {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-        }
-
-        .payment-control {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .payment-control select {
-            padding: 0.5rem;
-            font-size: 0.85rem;
-            min-width: 120px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            background: var(--white);
-            cursor: pointer;
-        }
-
-        .payment-control select:focus {
-            outline: none;
-            border-color: var(--ocean-light);
-        }
-
-        .payment-btn {
-            padding: 0.5rem 1rem;
-            background: var(--ocean-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .payment-btn:hover {
-            background: var(--ocean-deep);
-        }
-
-        .payment-btn.loading {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .admin-actions {
-            margin: 2rem 0;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .no-sessions {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-gray);
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast.success {
-            background: #059669;
-        }
-
-        .toast.error {
-            background: #dc2626;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .student-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .sessions-table {
-                overflow-x: auto;
-            }
-
-            .payment-control {
-                flex-direction: column;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -256,12 +75,12 @@
                                 <td><?= htmlspecialchars($assignment['location'] ?? 'TBD') ?></td>
                                 <td>
                                     <div class="payment-control">
-                                        <select id="payment-<?= $assignment['id'] ?>">
+                                        <select id="payment-<?= $assignment['id'] ?>" data-original="<?= htmlspecialchars($assignment['payment_status'] ?? 'pending') ?>">
                                             <option value="pending" <?= ($assignment['payment_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                                             <option value="paid" <?= ($assignment['payment_status'] ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
                                             <option value="refunded" <?= ($assignment['payment_status'] ?? '') === 'refunded' ? 'selected' : '' ?>>Refunded</option>
                                         </select>
-                                        <button type="button" class="payment-btn" onclick="updatePayment(<?= $assignment['id'] ?>)">Save</button>
+                                        <button type="button" class="payment-btn" id="pay-btn-<?= $assignment['id'] ?>" onclick="updatePayment(<?= $assignment['id'] ?>)" disabled>Save</button>
                                     </div>
                                 </td>
                             </tr>
@@ -298,6 +117,15 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
+        document.querySelectorAll('select[id^="payment-"]').forEach(select => {
+            select.addEventListener('change', function() {
+                const assignmentId = this.id.replace('payment-', '');
+                const btn = document.getElementById(`pay-btn-${assignmentId}`);
+                const original = this.dataset.original;
+                btn.disabled = (this.value === original);
+            });
+        });
+
         function updatePayment(assignmentId) {
             const select = document.getElementById(`payment-${assignmentId}`);
             const btn = select.nextElementSibling;
@@ -309,7 +137,7 @@
             const formData = new FormData();
             formData.append('payment_status', status);
             
-            fetch(`${baseUrl}/students/${assignmentId}/payment/<?= $student['id'] ?>`, {
+            fetch(`${baseUrl}/students/payment/${assignmentId}/<?= $student['id'] ?>`, {
                 method: 'POST',
                 body: formData
             })

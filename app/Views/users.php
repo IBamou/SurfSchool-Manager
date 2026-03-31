@@ -4,33 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Users - <?= $siteName ?? 'SurfManager' ?></title>
+    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
 </head>
-<style>
-    a {
-        display: block;
-        width: 35px;
-        padding: 15px;
-        background-color: gray;
-        text-decoration: none;
-        color: white;
-    }
-
-    main {
-        margin-top: 20px;
-    }
-</style>
 
 <body>
-    <main>
+    <header>
+        <div class="container header-content">
+            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <nav>
+                <a href="<?= $baseUrl ?>/home">Home</a>
+                <a href="<?= $baseUrl ?>/lessons">Lessons</a>
+                <a href="<?= $baseUrl ?>/sessions">Sessions</a>
+                <a href="<?= $baseUrl ?>/students" class="active">Students</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page-content">
         <h1>Users</h1>
         <ul>
             <?php foreach ($users as $user): ?>
                 <li>
-                    <h2><?php echo htmlspecialchars($user['name']); ?></h2>
-                    <p>Email: <?php echo htmlspecialchars($user['email']); ?></p>
-                    <p>Level: <?php echo htmlspecialchars($user['level']); ?></p>
-                    <a href="http://localhost/surfManager/users/<?= $user['id'] ?>">View</a>
+                    <h2><?= htmlspecialchars($user['name']) ?></h2>
+                    <p>Email: <?= htmlspecialchars($user['email']) ?></p>
+                    <p>Level: <?= htmlspecialchars($user['level']) ?></p>
+                    <a href="<?= $baseUrl ?>/students/<?= $user['id'] ?>">View</a>
                 </li>
             <?php endforeach; ?>
         </ul>

@@ -18,6 +18,7 @@
                 <a href="<?= $baseUrl ?? '' ?>/lessons">Lessons</a>
                 <a href="<?= $baseUrl ?? '' ?>/sessions">Sessions</a>
                 <a href="<?= $baseUrl ?? '' ?>/students">Students</a>
+                <a href="<?= $baseUrl ?? '' ?>/login">Login</a>
             </nav>
         </div>
     </header>
@@ -50,43 +51,6 @@
             </a>
         </div>
     </main>
-
-    <style>
-        .home-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        .home-card {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 2.5rem;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text-dark);
-            box-shadow: 0 10px 40px var(--shadow);
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .home-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--ocean-light);
-            box-shadow: 0 20px 50px var(--shadow);
-        }
-        .home-card-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        .home-card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--ocean-blue);
-        }
-        .home-card p {
-            color: var(--text-gray);
-        }
-    </style>
 </body>
 
 </html>

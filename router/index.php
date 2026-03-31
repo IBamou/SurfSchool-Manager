@@ -6,6 +6,7 @@ use Ilyas\SurfManager\Controllers\HomeController;
 use Ilyas\SurfManager\Controllers\LessonsController;
 use Ilyas\SurfManager\Controllers\SessionsController;
 use Ilyas\SurfManager\Controllers\StudentsController;
+use Ilyas\SurfManager\Controllers\AuthController;
 
 class Router {
     private $routes = [];
@@ -35,11 +36,14 @@ class Router {
         foreach ($this->routes as $route) {
             if ($route['method'] !== $requestMethod) continue;
 
-            $patternRegex = preg_replace('#\{([\w]+)\}#', '(?P<id>\d+)', $route['pattern']);
+            $patternRegex = preg_replace_callback('#\{([\w]+)\}#', function($matches) {
+                return '(?P<' . $matches[1] . '>\d+)';
+            }, $route['pattern']);
+            
             if (preg_match("#^$patternRegex$#", $currentUrl, $matches)) {
                 $params = [];
                 foreach ($matches as $key => $value) {
-                    if (is_string($key)) $params[$key] = $value;
+                    if (is_string($key)) $params[$key] = (int)$value;
                 }
                 [$class, $method] = $route['callback'];
                 $controller = new $class();
@@ -84,7 +88,21 @@ $router->get('students', [StudentsController::class, 'index']);
 $router->get('students/{id}', [StudentsController::class, 'show']);
 $router->get('students/edit/{id}', [StudentsController::class, 'edit']);
 $router->post('students/edit/{id}', [StudentsController::class, 'edit']);
-$router->post('students/{id}/level', [StudentsController::class, 'updateLevel']);
-$router->post('students/{assignmentId}/payment/{id}', [StudentsController::class, 'updatePayment']);
+$router->post('students/level/{id}', [StudentsController::class, 'updateLevel']);
+$router->post('students/payment/{assignmentId}/{studentId}', [StudentsController::class, 'updatePayment']);
+
+// Auth
+$router->get('login', [AuthController::class, 'login']);
+$router->post('auth/login', [AuthController::class, 'login']);
+$router->get('signup', [AuthController::class, 'signup']);
+$router->post('auth/signup', [AuthController::class, 'signup']);
+$router->get('auth/logout', [AuthController::class, 'logout']);
+
+// Student Dashboard
+$router->get('student/dashboard', [AuthController::class, 'dashboard']);
+$router->get('student/lessons', [AuthController::class, 'lessons']);
+$router->get('student/profile', [AuthController::class, 'profile']);
+$router->get('student/edit-profile', [AuthController::class, 'editProfile']);
+$router->get('student/change-password', [AuthController::class, 'changePassword']);
 
 $router->run();

@@ -58,13 +58,35 @@
 
                 <div class="form-actions">
                     <a href="<?= $baseUrl ?>/lessons" class="btn-back">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" disabled>
                         <?= $isEditing ? 'Update' : 'Create' ?> Lesson
                     </button>
                 </div>
             </form>
         </div>
     </main>
+
+    <script>
+        const form = document.querySelector('form');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalValues = {};
+
+        form.querySelectorAll('input, textarea, select').forEach(field => {
+            originalValues[field.name] = field.value;
+            field.addEventListener('input', checkChanges);
+            field.addEventListener('change', checkChanges);
+        });
+
+        function checkChanges() {
+            let hasChanges = false;
+            form.querySelectorAll('input, textarea, select').forEach(field => {
+                if (field.value !== originalValues[field.name]) {
+                    hasChanges = true;
+                }
+            });
+            submitBtn.disabled = !hasChanges;
+        }
+    </script>
 </body>
 
 </html>

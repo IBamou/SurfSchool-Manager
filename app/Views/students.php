@@ -94,13 +94,13 @@
                                 </td>
                                 <td>
                                     <div class="inline-edit">
-                                        <select id="level-<?= $student['id'] ?>">
+                                        <select id="level-<?= $student['id'] ?>" data-original="<?= htmlspecialchars($student['level'] ?? 'Beginner') ?>">
                                             <option value="Beginner" <?= ($student['level'] ?? '') === 'Beginner' ? 'selected' : '' ?>>Beginner</option>
                                             <option value="Intermediate" <?= ($student['level'] ?? '') === 'Intermediate' ? 'selected' : '' ?>>Intermediate</option>
                                             <option value="Advanced" <?= ($student['level'] ?? '') === 'Advanced' ? 'selected' : '' ?>>Advanced</option>
                                             <option value="Expert" <?= ($student['level'] ?? '') === 'Expert' ? 'selected' : '' ?>>Expert</option>
                                         </select>
-                                        <button class="save-btn" onclick="updateLevel(<?= $student['id'] ?>)">Save</button>
+                                        <button class="save-btn" id="btn-<?= $student['id'] ?>" onclick="updateLevel(<?= $student['id'] ?>)" disabled>Save</button>
                                     </div>
                                 </td>
                                 <td>
@@ -140,6 +140,15 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
+        document.querySelectorAll('select[id^="level-"]').forEach(select => {
+            select.addEventListener('change', function() {
+                const studentId = this.id.replace('level-', '');
+                const btn = document.getElementById(`btn-${studentId}`);
+                const original = this.dataset.original;
+                btn.disabled = (this.value === original);
+            });
+        });
+
         function filterStudents() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const levelFilter = document.getElementById('levelFilter').value;
@@ -173,7 +182,7 @@
             const formData = new FormData();
             formData.append('level', level);
             
-            fetch(`${baseUrl}/students/${studentId}/level`, {
+            fetch(`${baseUrl}/students/level/${studentId}`, {
                 method: 'POST',
                 body: formData
             })
