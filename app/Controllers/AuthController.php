@@ -13,10 +13,22 @@ class AuthController {
     }
 
     public function login() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // VERIFY INPUTS
+            // PASSWORD VERIFY
+            // SEARCH SQL
+            // ACCEES TO APP
+        }
         $this->render_template('login', ['baseUrl' => $this->baseUrl]);
     }
 
     public function signup() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // VERIFY INPUTS
+            // PASSWORD HASH
+            // INSET DATA 
+            // ACCEES TO APP
+        }
         $this->render_template('signup', ['baseUrl' => $this->baseUrl]);
     }
 

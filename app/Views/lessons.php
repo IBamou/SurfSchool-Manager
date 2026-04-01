@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surf Lessons - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/lessons.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/lessons.css">
 </head>
 
 <body>
@@ -14,10 +14,10 @@
         <div class="container header-content">
             <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/home">Home</a>
-                <a href="<?= $baseUrl ?>/lessons" class="active">Lessons</a>
-                <a href="<?= $baseUrl ?>/sessions">Sessions</a>
-                <a href="<?= $baseUrl ?>/students">Students</a>
+                <a href="<?= $baseUrl ?>home">Home</a>
+                <a href="<?= $baseUrl ?>lessons" class="active">Lessons</a>
+                <a href="<?= $baseUrl ?>sessions">Sessions</a>
+                <a href="<?= $baseUrl ?>students">Students</a>
             </nav>
         </div>
     </header>
@@ -32,7 +32,7 @@
     <main class="container">
         <!-- Search Section -->
         <div class="search-section">
-            <form action="<?= $baseUrl ?>/lessons" method="GET" class="search-form">
+            <form action="<?= $baseUrl ?>lessons" method="GET" class="search-form">
                 <div class="search-input">
                     <input 
                         type="text" 
@@ -82,8 +82,8 @@
                             <p class="lesson-desc"><?= htmlspecialchars($lesson['description'] ?? '') ?></p>
 
                             <div class="lesson-footer">
-                                <a href="<?= $baseUrl ?>/lessons/<?= $lesson['id'] ?>" class="btn btn-secondary btn-sm">View Sessions</a>
-                                <a href="<?= $baseUrl ?>/lessons/edit/<?= $lesson['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
+                                <a href="<?= $baseUrl ?>lessons/<?= $lesson['id'] ?>" class="btn btn-secondary btn-sm">View Sessions</a>
+                                <a href="<?= $baseUrl ?>lessons/edit/<?= $lesson['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
                             </div>
                         </div>
                     </div>

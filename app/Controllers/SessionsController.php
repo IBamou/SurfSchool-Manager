@@ -99,15 +99,18 @@ class SessionsController {
             }
             
             $model->addSession($data);
+            unset($_SESSION["lesson_id"]);
             header("Location: " . $this->baseUrl . "sessions");
             exit;
         }
-
+        if (isset($_GET["lesson_id"])) {
+            $_SESSION["lesson_id"] = $_GET["lesson_id"];
+        }
         $this->render_template('sessionForm', [
             'baseUrl' => $this->baseUrl,
             'lessons' => $lessons,
             'coaches' => $coaches,
-            'isEditing' => false
+            'isEditing' => false,
         ]);
     }
 

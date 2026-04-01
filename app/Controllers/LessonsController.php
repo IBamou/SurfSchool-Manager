@@ -8,7 +8,7 @@ class LessonsController {
     public $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager';
+        $this->baseUrl = 'http://localhost/surfManager/';
     }
 
     public function index() {

@@ -15,11 +15,7 @@ class CoachModel extends Model {
 
     public function getCoaches() {
         try {
-            $query = 'SELECT c.*, u.name, u.email, u.avatar
-                      FROM coaches c 
-                      LEFT JOIN users u ON c.user_id = u.id
-                      WHERE c.is_active = 1
-                      ORDER BY c.rating DESC';
+            $query = 'SELECT * FROM coaches';
             $stmt = $this->db->prepare($query);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
