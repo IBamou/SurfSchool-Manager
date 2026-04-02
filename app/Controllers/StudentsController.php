@@ -106,7 +106,7 @@ class StudentsController {
     private function render_template(string $template = '', array $data = []) {
         if ($template) {
             extract($data);
-            include '../app/Views/' . $template . '.php';
+            include '../app/Views/admin/' . $template . '.php';
             exit;
         }
     }

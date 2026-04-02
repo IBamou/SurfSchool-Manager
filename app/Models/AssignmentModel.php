@@ -150,4 +150,16 @@ class AssignmentModel extends Model {
             return 0;
         }
     }
+
+    public function getAllAssignments() {
+        try {
+            $query = 'SELECT * FROM assignments';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $this->error = true;
+            return [];
+        }
+    }
 }

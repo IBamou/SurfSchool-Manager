@@ -5,20 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($session['lesson_title'] ?? 'Session') ?> - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/session.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/form.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/session.css">
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/home">Home</a>
-                <a href="<?= $baseUrl ?>/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/sessions" class="active">Sessions</a>
-                <a href="<?= $baseUrl ?>/students">Students</a>
+                <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
+                <a href="<?= $baseUrl ?>lessons">Lessons</a>
+                <a href="<?= $baseUrl ?>sessions" class="active">Sessions</a>
+                <a href="<?= $baseUrl ?>students">Students</a>
+                <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -26,21 +27,20 @@
     <main class="container">
         <!-- Session Info Card -->
         <div class="session-detail-card">
-            <div class="session-header">
-                <div class="session-badges">
-                    <span class="badge badge-<?= strtolower($session['lesson_level'] ?? 'beginner') ?>">
-                        <?= htmlspecialchars($session['lesson_level'] ?? 'Beginner') ?>
-                    </span>
-                    <span class="badge badge-<?= strtolower($session['status'] ?? 'available') ?>">
-                        <?= htmlspecialchars(ucfirst($session['status'] ?? 'Available')) ?>
-                    </span>
+            <div class="session-header-row">
+                <div class="session-header-left">
+                    <div class="session-badges">
+                        <span class="badge badge-<?= strtolower($session['lesson_level'] ?? 'beginner') ?>">
+                            <?= htmlspecialchars($session['lesson_level'] ?? 'Beginner') ?>
+                        </span>
+                        <span class="badge badge-<?= strtolower($session['status'] ?? 'available') ?>">
+                            <?= htmlspecialchars(ucfirst($session['status'] ?? 'Available')) ?>
+                        </span>
+                    </div>
+                    <h1><?= htmlspecialchars($session['lesson_title'] ?? 'Surf Session') ?></h1>
                 </div>
-                <h1><?= htmlspecialchars($session['lesson_title'] ?? 'Surf Session') ?></h1>
-                <?php if (!empty($session['lesson_description'])): ?>
-                    <p class="session-desc"><?= htmlspecialchars($session['lesson_description']) ?></p>
-                <?php endif; ?>
             </div>
-
+            
             <div class="session-details-grid">
                 <div class="detail-item">
                     <div class="detail-icon">📅</div>
@@ -94,16 +94,26 @@
                     <small>per person</small>
                 </div>
                 <?php if (($session['status'] ?? '') === 'available' && $session['spots_available'] > 0): ?>
-                    <a href="<?= $baseUrl ?>/sessions/book/<?= $session['id'] ?>" class="btn btn-primary">Book This Session</a>
+                    <a href="<?= $baseUrl ?>sessions/book/<?= $session['id'] ?>" class="btn btn-primary">Book This Session</a>
                 <?php else: ?>
                     <button class="btn btn-secondary" disabled>Not Available</button>
                 <?php endif; ?>
             </div>
         </div>
 
+        <!-- Edit/Delete Buttons -->
+        <div class="detail-buttons">
+            <a href="<?= $baseUrl ?>sessions/edit/<?= $session['id'] ?>" class="btn btn-secondary">Edit</a>
+            <form action="<?= $baseUrl ?>sessions/delete/<?= $session['id'] ?>" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-red-outline" onclick="return confirm('Delete this session?')">Delete</button>
+            </form>
+        </div>
+
         <!-- Enrolled Students Section -->
         <div class="enrolled-section">
-            <h2>Enrolled Students (<?= count($assignments ?? []) ?>)</h2>
+            <div class="section-header">
+                <h2 class="section-title">Enrolled Students (<?= count($assignments ?? []) ?>)</h2>
+            </div>
             
             <?php if (!empty($assignments)): ?>
                 <div class="assignments-table">
@@ -127,8 +137,8 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <form action="<?= $baseUrl ?>/sessions/cancel/<?= $assignment['id'] ?>/<?= $session['id'] ?>" method="POST" class="inline-form">
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this student?')">Remove</button>
+                                        <form action="<?= $baseUrl ?>sessions/cancel/<?= $assignment['id'] ?>/<?= $session['id'] ?>" method="POST" class="inline-form">
+                                            <button type="submit" class="btn btn-red-outline btn-sm" onclick="return confirm('Remove this student?')">Remove</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -139,14 +149,6 @@
             <?php else: ?>
                 <p class="no-students">No students enrolled yet.</p>
             <?php endif; ?>
-        </div>
-
-        <!-- Admin Actions -->
-        <div class="admin-actions">
-            <a href="<?= $baseUrl ?>/sessions/edit/<?= $session['id'] ?>" class="btn btn-secondary">Edit Session</a>
-            <form action="<?= $baseUrl ?>/sessions/delete/<?= $session['id'] ?>" method="POST" class="inline-form" onsubmit="return confirm('Delete this session?')">
-                <button type="submit" class="btn btn-danger">Delete Session</button>
-            </form>
         </div>
     </main>
 </body>

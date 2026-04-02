@@ -48,6 +48,24 @@ class StudentModel extends Model {
         }
     }
 
+    
+    public function getStudentByUserId(int $userId) {
+        try {
+            $query = 'SELECT s.*, u.name, u.email
+                      FROM students s
+                      LEFT JOIN users u ON s.user_id = u.id
+                      WHERE s.user_id = :user_id limit 1';
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $this->error = true;
+            return null;
+        }
+    }
+
+
     public function getStudentAssignments(int $studentId) {
         try {
             $query = 'SELECT a.*, s.*, l.title as lesson_title, l.level as lesson_level,
@@ -88,6 +106,20 @@ class StudentModel extends Model {
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':status', $status);
             $stmt->bindParam(':id', $assignmentId);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            $this->error = true;
+            return false;
+        }
+    }
+
+    public function addStudent(int $userId, string $level) {
+        try {
+            $query = 'INSERT INTO students (user_id, level) VALUES (:user_id, :level)';
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->bindParam(':level', $level);
             $stmt->execute();
             return true;
         } catch (Exception $e) {

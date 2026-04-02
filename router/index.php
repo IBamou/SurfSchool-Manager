@@ -3,10 +3,14 @@ session_start();
 require __DIR__ . '/../vendor/autoload.php';
 
 use Ilyas\SurfManager\Controllers\HomeController;
+use Ilyas\SurfManager\Controllers\DashboardController;
 use Ilyas\SurfManager\Controllers\LessonsController;
 use Ilyas\SurfManager\Controllers\SessionsController;
 use Ilyas\SurfManager\Controllers\StudentsController;
+use Ilyas\SurfManager\Controllers\CoachController;
 use Ilyas\SurfManager\Controllers\AuthController;
+use Ilyas\SurfManager\Controllers\ProfileController;
+use Ilyas\SurfManager\Controllers\BookingController;
 
 class Router {
     private $routes = [];
@@ -53,43 +57,15 @@ class Router {
         }
 
         http_response_code(404);
-        echo "Page not found";
+        include '../app/Views/404.php';
     }
 }
 
 $router = new Router();
 
-// Home
+// Landing Page
 $router->get('home', [HomeController::class, 'show']);
-
-// Lessons
-$router->get('lessons', [LessonsController::class, 'index']);
-$router->get('lessons/{id}', [LessonsController::class, 'show']);
-$router->get('lessons/add', [LessonsController::class, 'add']);
-$router->post('lessons/add', [LessonsController::class, 'add']);
-$router->get('lessons/edit/{id}', [LessonsController::class, 'edit']);
-$router->post('lessons/edit/{id}', [LessonsController::class, 'edit']);
-$router->post('lessons/delete/{id}', [LessonsController::class, 'delete']);
-
-// Sessions
-$router->get('sessions', [SessionsController::class, 'index']);
-$router->get('sessions/{id}', [SessionsController::class, 'show']);
-$router->get('sessions/add', [SessionsController::class, 'add']);
-$router->post('sessions/add', [SessionsController::class, 'add']);
-$router->get('sessions/edit/{id}', [SessionsController::class, 'edit']);
-$router->post('sessions/edit/{id}', [SessionsController::class, 'edit']);
-$router->post('sessions/delete/{id}', [SessionsController::class, 'delete']);
-$router->get('sessions/book/{id}', [SessionsController::class, 'book']);
-$router->post('sessions/book/{id}', [SessionsController::class, 'book']);
-$router->post('sessions/cancel/{assignmentId}/{sessionId}', [SessionsController::class, 'cancelBooking']);
-
-// Students
-$router->get('students', [StudentsController::class, 'index']);
-$router->get('students/{id}', [StudentsController::class, 'show']);
-$router->get('students/edit/{id}', [StudentsController::class, 'edit']);
-$router->post('students/edit/{id}', [StudentsController::class, 'edit']);
-$router->post('students/level/{id}', [StudentsController::class, 'updateLevel']);
-$router->post('students/payment/{assignmentId}/{studentId}', [StudentsController::class, 'updatePayment']);
+$router->get('', [HomeController::class, 'show']);
 
 // Auth
 $router->get('login', [AuthController::class, 'login']);
@@ -98,11 +74,57 @@ $router->get('signup', [AuthController::class, 'signup']);
 $router->post('auth/signup', [AuthController::class, 'signup']);
 $router->get('auth/logout', [AuthController::class, 'logout']);
 
-// Student Dashboard
-$router->get('student/dashboard', [AuthController::class, 'dashboard']);
-$router->get('student/lessons', [AuthController::class, 'lessons']);
-$router->get('student/profile', [AuthController::class, 'profile']);
-$router->get('student/edit-profile', [AuthController::class, 'editProfile']);
-$router->get('student/change-password', [AuthController::class, 'changePassword']);
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['role'] === 'admin') {
+        // Dashboard
+        $router->get('dashboard', [DashboardController::class, 'index']);
+
+        // Lessons
+        $router->get('lessons', [LessonsController::class, 'index']);
+        $router->get('lessons/{id}', [LessonsController::class, 'show']);
+        $router->get('lessons/add', [LessonsController::class, 'add']);
+        $router->post('lessons/add', [LessonsController::class, 'add']);
+        $router->get('lessons/edit/{id}', [LessonsController::class, 'edit']);
+        $router->post('lessons/edit/{id}', [LessonsController::class, 'edit']);
+        $router->post('lessons/delete/{id}', [LessonsController::class, 'delete']);
+
+        // Sessions
+        $router->get('sessions', [SessionsController::class, 'index']);
+        $router->get('sessions/{id}', [SessionsController::class, 'show']);
+        $router->get('sessions/add', [SessionsController::class, 'add']);
+        $router->post('sessions/add', [SessionsController::class, 'add']);
+        $router->get('sessions/edit/{id}', [SessionsController::class, 'edit']);
+        $router->post('sessions/edit/{id}', [SessionsController::class, 'edit']);
+        $router->post('sessions/delete/{id}', [SessionsController::class, 'delete']);
+        $router->get('sessions/book/{id}', [BookingController::class, 'book']);
+        $router->post('sessions/book/{id}', [BookingController::class, 'book']);
+        $router->post('sessions/cancel/{assignmentId}/{sessionId}', [BookingController::class, 'cancelBooking']);
+
+        // Students
+        $router->get('students', [StudentsController::class, 'index']);
+        $router->get('students/{id}', [StudentsController::class, 'show']);
+        $router->get('students/edit/{id}', [StudentsController::class, 'edit']);
+        $router->post('students/edit/{id}', [StudentsController::class, 'edit']);
+        $router->post('students/level/{id}', [StudentsController::class, 'updateLevel']);
+        $router->post('students/payment/{assignmentId}/{studentId}', [StudentsController::class, 'updatePayment']);
+
+        // Coaches
+        $router->get('coaches', [CoachController::class, 'index']);
+        $router->get('coaches/add', [CoachController::class, 'add']);
+        $router->post('coaches/add', [CoachController::class, 'add']);
+        $router->post('coaches/delete/{id}', [CoachController::class, 'delete']);
+
+        // profile
+        $router->get('profile', [ProfileController::class, 'profile']);
+
+    } elseif ($_SESSION['user']['role'] === 'user') {
+        // Student Dashboard
+        $router->get('dashboard', [ProfileController::class, 'dashboard']);
+        $router->get('sessions', [ProfileController::class, 'sessions']);
+        $router->get('profile', [ProfileController::class, 'profile']);
+        $router->get('edit-profile', [ProfileController::class, 'editProfile']);
+        $router->get('change-password', [ProfileController::class, 'changePassword']);
+    }
+}
 
 $router->run();

@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Session - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/sessionBook.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/sessionBook.css">
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/home">Home</a>
-                <a href="<?= $baseUrl ?>/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/sessions" class="active">Sessions</a>
-                <a href="<?= $baseUrl ?>/students">Students</a>
+                <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
+                <a href="<?= $baseUrl ?>lessons">Lessons</a>
+                <a href="<?= $baseUrl ?>sessions" class="active">Sessions</a>
+                <a href="<?= $baseUrl ?>students">Students</a>
+                <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -39,7 +41,7 @@
                 <div class="alert alert-error"><?= htmlspecialchars($_GET['error']) ?></div>
             <?php endif; ?>
 
-            <form action="<?= $baseUrl ?>/sessions/book/<?= $session['id'] ?>" method="POST">
+            <form action="<?= $baseUrl ?>sessions/book/<?= $session['id'] ?>" method="POST">
                 <div class="form-group">
                     <label for="student_id">Select Student *</label>
                     <select id="student_id" name="student_id" required>
@@ -51,7 +53,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="<?= $baseUrl ?>/sessions/<?= $session['id'] ?>" class="btn-back">Cancel</a>
+                    <a href="<?= $baseUrl ?>sessions/<?= $session['id'] ?>" class="btn-back">Cancel</a>
                     <button type="submit" class="btn btn-primary">Confirm Booking</button>
                 </div>
             </form>

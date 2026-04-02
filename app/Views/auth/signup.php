@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/form.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/form.css">
 </head>
 
 <body>
@@ -14,9 +14,7 @@
         <div class="container header-content">
             <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/home">Home</a>
-                <a href="<?= $baseUrl ?>/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/login" class="active">Login</a>
+                <a href="<?= $baseUrl ?>login" class="active">Login</a>
             </nav>
         </div>
     </header>
@@ -26,7 +24,7 @@
             <h1>Create Account</h1>
             <p class="form-subtitle">Join our surf school today</p>
 
-            <form action="<?= $baseUrl ?>/auth/signup" method="POST">
+            <form action="<?= $baseUrl ?>auth/signup" method="POST">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="name">Full Name *</label>
@@ -53,10 +51,11 @@
                             <option value="Expert">Expert</option>
                         </select>
                     </div>
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
                 </div>
 
                 <div class="form-actions">
-                    <a href="<?= $baseUrl ?>/login" class="btn-back">Already have account?</a>
+                    <a href="<?= $baseUrl ?>login" class="btn-back">Already have account?</a>
                     <button type="submit" class="btn btn-primary">Create Account</button>
                 </div>
             </form>

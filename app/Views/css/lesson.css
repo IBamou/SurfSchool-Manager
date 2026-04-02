@@ -6,9 +6,20 @@
     box-shadow: 0 10px 40px var(--shadow);
 }
 
-.lesson-detail-header h1 {
+.lesson-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.lesson-header-left {
+    flex: 1;
+}
+
+.lesson-header-left h1 {
     font-size: 2rem;
-    margin: 1rem 0;
+    margin: 0.75rem 0 0;
     color: var(--text-dark);
 }
 
@@ -16,6 +27,31 @@
     color: var(--text-gray);
     font-size: 1.1rem;
     line-height: 1.8;
+    margin-top: 1rem;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+}
+
+.header-buttons .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin: 2rem 0 1rem;
 }
 
 .section-header {
@@ -25,9 +61,8 @@
     margin: 2rem 0 1rem;
 }
 
-.section-header h2 {
-    font-size: 1.5rem;
-    color: var(--text-dark);
+.section-header .section-title {
+    margin: 0;
 }
 
 .sessions-list {
@@ -75,7 +110,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--ocean-blue);
-    margin: 0 1rem;
+    margin: 0 1.5rem;
 }
 
 .session-actions {
@@ -83,36 +118,82 @@
     gap: 0.5rem;
 }
 
-.admin-actions {
-    margin-top: 2rem;
-    display: flex;
-    gap: 1rem;
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--white);
+    border-radius: 24px;
+    margin: 2rem 0;
+    border: 2px dashed var(--ocean-light);
 }
 
-.btn-danger {
-    background: #ef4444;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 14px;
-    font-size: 1rem;
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.empty-state p {
+    color: var(--text-gray);
+    margin-bottom: 1.5rem;
+}
+
+.btn-red {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 2px solid #dc2626;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
 }
 
-.btn-danger:hover {
+.btn-red:hover {
     background: #dc2626;
+    color: white;
 }
 
 @media (max-width: 768px) {
+    .lesson-header-row {
+        flex-direction: column;
+    }
+
+    .lesson-actions {
+        width: 100%;
+    }
+
+    .lesson-actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
     .session-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
+
     .session-price {
         margin: 0;
+    }
+
+    .session-meta {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }

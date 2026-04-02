@@ -5,13 +5,45 @@ use Ilyas\SurfManager\Models\SessionModel;
 use Ilyas\SurfManager\Models\LessonModel;
 use Ilyas\SurfManager\Models\CoachModel;
 use Ilyas\SurfManager\Models\AssignmentModel;
-use Ilyas\SurfManager\Models\StudentModel;
 
 class SessionsController {
     public $baseUrl;
 
     public function __construct() {
         $this->baseUrl = 'http://localhost/surfManager/';
+    }
+
+    public function sessions() {
+        $userRole = $_SESSION['user']['role'] ?? 'user';
+
+        if ($userRole === 'admin') {
+            $this->index();
+        } else {
+            $this->studentSessions();
+        }
+    }
+
+    public function studentSessions() {
+        $assignmentModel = new AssignmentModel();
+        $sessionModel = new SessionModel();
+        
+        $studentId = $_SESSION['student']['id'];
+        
+        $assignments = $assignmentModel->getStudentAssignments($studentId);
+        $sessions = [];
+        
+        foreach ($assignments as $assignment) {
+            $session = $sessionModel->getSession($assignment['session_id']);
+            if ($session) {
+                $session['payment_status'] = $assignment['payment_status'];
+                $sessions[] = $session;
+            }
+        }
+
+        $this->render_template('studentSessions', [
+            'baseUrl' => $this->baseUrl,
+            'sessions' => $sessions
+        ], 'student');
     }
 
     public function index() {
@@ -45,7 +77,7 @@ class SessionsController {
             'coaches' => $coaches
         ];
 
-        $this->render_template('sessions', $data);
+        $this->render_template('sessions', $data, 'admin');
     }
 
     public function show(int $id = 0) {
@@ -61,7 +93,7 @@ class SessionsController {
                     'baseUrl' => $this->baseUrl,
                     'session' => $session,
                     'assignments' => $assignments
-                ]);
+                ], 'admin');
             } else {
                 header("Location: " . $this->baseUrl . "sessions");
                 exit;
@@ -111,7 +143,7 @@ class SessionsController {
             'lessons' => $lessons,
             'coaches' => $coaches,
             'isEditing' => false,
-        ]);
+        ], 'admin');
     }
 
     public function edit(int $id) {
@@ -161,7 +193,7 @@ class SessionsController {
             'isEditing' => true,
             'session' => $session,
             'assignments' => $assignments
-        ]);
+        ], 'admin');
     }
 
     public function delete(int $id) {
@@ -171,55 +203,10 @@ class SessionsController {
         exit;
     }
 
-    public function book(int $id) {
-        $model = new SessionModel();
-        $session = $model->getSession($id);
-        
-        if (!$session || $session['status'] !== 'available' || $session['spots_available'] <= 0) {
-            header("Location: " . $this->baseUrl . "sessions/" . $id . "?error=unavailable");
-            exit;
-        }
-        
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $studentId = (int)($_POST["student_id"] ?? 0);
-            
-            if (empty($studentId)) {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "/book?error=Student required");
-                exit;
-            }
-            
-            $assignmentModel = new AssignmentModel();
-            $result = $assignmentModel->assignStudent($id, $studentId);
-            
-            if ($result) {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "?success=booked");
-            } else {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "?error=booking_failed");
-            }
-            exit;
-        }
-        
-        $studentModel = new StudentModel();
-        $students = $studentModel->getStudents();
-        
-        $this->render_template('sessionBook', [
-            'baseUrl' => $this->baseUrl,
-            'session' => $session,
-            'students' => $students
-        ]);
-    }
-
-    public function cancelBooking(int $assignmentId, int $sessionId) {
-        $assignmentModel = new AssignmentModel();
-        $assignmentModel->removeAssignment($assignmentId);
-        header("Location: " . $this->baseUrl . "sessions/" . $sessionId);
-        exit;
-    }
-
-    private function render_template(string $template = '', array $data = []) {
+    private function render_template(string $template = '', array $data = [], string $folder = '') {
         if ($template) {
             extract($data);
-            include '../app/Views/' . $template . '.php';
+            include '../app/Views/' . $folder . '/' . $template . '.php';
             exit;
         }
     }

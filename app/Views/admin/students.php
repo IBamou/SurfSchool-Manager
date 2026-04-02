@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/students.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/students.css">
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/home">Home</a>
-                <a href="<?= $baseUrl ?>/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/sessions">Sessions</a>
-                <a href="<?= $baseUrl ?>/students" class="active">Students</a>
+                <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
+                <a href="<?= $baseUrl ?>lessons">Lessons</a>
+                <a href="<?= $baseUrl ?>sessions">Sessions</a>
+                <a href="<?= $baseUrl ?>students" class="active">Students</a>
+                <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -108,7 +110,7 @@
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <a href="<?= $baseUrl ?>/students/<?= $student['id'] ?>" class="btn btn-secondary btn-sm">View</a>
+                                        <a href="<?= $baseUrl ?>students/<?= $student['id'] ?>" class="btn btn-secondary btn-sm">View</a>
                                     </div>
                                 </td>
                             </tr>

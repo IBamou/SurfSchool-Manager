@@ -12,12 +12,14 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>home">Home</a>
+                <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
                 <a href="<?= $baseUrl ?>lessons" class="active">Lessons</a>
                 <a href="<?= $baseUrl ?>sessions">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
+                <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -60,7 +62,7 @@
             <div class="results-info">
                 <?= count($lessons ?? []) ?> Lessons Available
             </div>
-            <a href="<?= $baseUrl ?>/lessons/add" class="btn btn-primary">
+            <a href="<?= $baseUrl ?>lessons/add" class="btn btn-primary">
                 + Add New Lesson
             </a>
         </div>
@@ -70,10 +72,7 @@
             <div class="lessons-grid">
                 <?php foreach ($lessons as $lesson): ?>
                     <div class="lesson-card">
-                        <div class="lesson-image">
-                            🏄
-                        </div>
-                        <div class="lesson-content">
+                    <div class="lesson-content">
                             <span class="badge badge-<?= strtolower($lesson['level'] ?? 'beginner') ?>">
                                 <?= htmlspecialchars($lesson['level'] ?? 'Beginner') ?>
                             </span>
@@ -84,6 +83,9 @@
                             <div class="lesson-footer">
                                 <a href="<?= $baseUrl ?>lessons/<?= $lesson['id'] ?>" class="btn btn-secondary btn-sm">View Sessions</a>
                                 <a href="<?= $baseUrl ?>lessons/edit/<?= $lesson['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
+                                <form action="<?= $baseUrl ?>lessons/delete/<?= $lesson['id'] ?>" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-red-outline btn-sm" onclick="return confirm('Delete this lesson and all its sessions?')">Delete</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -94,7 +96,7 @@
                 <div class="empty-icon">🏄‍♂️</div>
                 <h2>No Lessons Found</h2>
                 <p>No surf lessons available yet.</p>
-                <a href="<?= $baseUrl ?>/lessons/add" class="btn btn-primary">Create First Lesson</a>
+                <a href="<?= $baseUrl ?>lessons/add" class="btn btn-primary">Create First Lesson</a>
             </div>
         <?php endif; ?>
     </main>

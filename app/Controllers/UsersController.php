@@ -31,7 +31,7 @@ class UsersController {
                 [$key , $value] = $pair;
                 $$key = $value;
             }
-            include '../app/Views/' . $template . '.php';
+            include '../app/Views/admin/' . $template . '.php';
             exit;
         }
     }

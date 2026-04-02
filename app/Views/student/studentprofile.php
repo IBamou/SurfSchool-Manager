@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/profile.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/profile.css">
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/student/dashboard">Dashboard</a>
-                <a href="<?= $baseUrl ?>/student/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/student/profile" class="active">Profile</a>
-                <a href="<?= $baseUrl ?>/auth/logout">Logout</a>
+                <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
+                <a href="<?= $baseUrl ?>sessions">Sessions</a>
+                <a href="<?= $baseUrl ?>profile" class="active">Profile</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -55,8 +55,8 @@
         </div>
 
         <div class="profile-actions">
-            <a href="<?= $baseUrl ?>/student/edit-profile" class="btn btn-secondary">Edit Profile</a>
-            <a href="<?= $baseUrl ?>/student/change-password" class="btn btn-outline">Change Password</a>
+            <a href="<?= $baseUrl ?>edit-profile" class="btn btn-secondary">Edit Profile</a>
+            <a href="<?= $baseUrl ?>change-password" class="btn btn-outline">Change Password</a>
         </div>
     </main>
 </body>

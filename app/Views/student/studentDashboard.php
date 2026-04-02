@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?= $siteName ?? 'SurfManager' ?></title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/surf-theme.css">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/app/Views/css/student-dashboard.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/student-dashboard.css">
 </head>
 
 <body>
     <header>
         <div class="container header-content">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
-                <a href="<?= $baseUrl ?>/student/dashboard" class="active">Dashboard</a>
-                <a href="<?= $baseUrl ?>/student/lessons">Lessons</a>
-                <a href="<?= $baseUrl ?>/student/profile">Profile</a>
-                <a href="<?= $baseUrl ?>/auth/logout">Logout</a>
+                <a href="<?= $baseUrl ?>dashboard" class="active">Dashboard</a>
+                <a href="<?= $baseUrl ?>sessions">Sessions</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
+                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
     </header>
@@ -49,10 +49,13 @@
         </div>
 
         <div class="section">
-            <h2>My Sessions</h2>
+            <div class="section-header">
+                <h2>My Sessions</h2>
+                <a href="<?= $baseUrl ?>student/sessions" class="btn btn-sm btn-outline">View All</a>
+            </div>
             <?php if (!empty($mySessions)): ?>
                 <div class="sessions-list">
-                    <?php foreach ($mySessions as $session): ?>
+                    <?php foreach (array_slice($mySessions, 0, 3) as $session): ?>
                         <div class="session-card">
                             <div class="session-info">
                                 <h3><?= htmlspecialchars($session['lesson_title'] ?? '') ?></h3>
@@ -69,27 +72,8 @@
                 </div>
             <?php else: ?>
                 <div class="empty-state">
-                    <p>No sessions enrolled yet.</p>
-                    <a href="<?= $baseUrl ?>/student/lessons" class="btn btn-primary">Browse Lessons</a>
+                    <p>No sessions enrolled yet. Browse available sessions to get started!</p>
                 </div>
-            <?php endif; ?>
-        </div>
-
-        <div class="section">
-            <h2>Available for You</h2>
-            <p class="section-desc">Based on your <?= htmlspecialchars($user['level'] ?? 'Beginner') ?> level</p>
-            <?php if (!empty($recommendedLessons)): ?>
-                <div class="lessons-preview">
-                    <?php foreach (array_slice($recommendedLessons, 0, 3) as $lesson): ?>
-                        <div class="lesson-preview-card">
-                            <span class="badge badge-<?= strtolower($lesson['level'] ?? 'beginner') ?>">
-                                <?= htmlspecialchars($lesson['level'] ?? '') ?>
-                            </span>
-                            <h4><?= htmlspecialchars($lesson['title'] ?? '') ?></h4>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                <a href="<?= $baseUrl ?>/student/lessons" class="btn btn-secondary">View All Lessons</a>
             <?php endif; ?>
         </div>
     </main>

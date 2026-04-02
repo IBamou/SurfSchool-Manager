@@ -28,14 +28,33 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
 }
 
 header {
     background: var(--white);
-    padding: 1.5rem 0;
+    height: 70px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 20px var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-family: 'Allison', cursive;
+    font-size: 1.8rem;
+    color: var(--ocean-deep);
+    text-decoration: none;
+}
+
+header {
+    background: var(--white);
+    padding: 1rem 0;
     box-shadow: 0 2px 20px var(--shadow);
     position: sticky;
     top: 0;
@@ -66,12 +85,12 @@ nav {
 }
 
 nav a {
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1rem;
     color: var(--text-gray);
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
@@ -117,14 +136,14 @@ nav a.active {
 }
 
 main {
-    padding: 2rem 0;
+    padding: 1.5rem 0;
 }
 
 .btn {
-    padding: 1rem 2rem;
+    padding: 0.7rem 1.5rem;
     border: none;
-    border-radius: 14px;
-    font-size: 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -150,6 +169,13 @@ main {
     background: var(--off-white);
     color: var(--ocean-blue);
     border: 2px solid var(--ocean-light);
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-secondary:hover {
@@ -167,6 +193,24 @@ main {
     background: var(--ocean-blue);
     color: var(--white);
     border-color: var(--ocean-blue);
+}
+
+.btn-red-outline {
+    background: transparent;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-red-outline:hover {
+    background: #dc3545;
+    color: var(--white);
 }
 
 .btn-sm {
@@ -226,6 +270,11 @@ main {
 .badge-paid {
     background: #d1fae5;
     color: #059669;
+}
+
+.badge-admin {
+    background: var(--ocean-blue);
+    color: var(--white);
 }
 
 .badge-refunded {
