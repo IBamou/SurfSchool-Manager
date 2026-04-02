@@ -7,6 +7,7 @@
     <title>Surf Lessons - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/lessons.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/toast.css">
 </head>
 
 <body>
@@ -19,6 +20,7 @@
                 <a href="<?= $baseUrl ?>sessions">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
@@ -83,9 +85,7 @@
                             <div class="lesson-footer">
                                 <a href="<?= $baseUrl ?>lessons/<?= $lesson['id'] ?>" class="btn btn-secondary btn-sm">View Sessions</a>
                                 <a href="<?= $baseUrl ?>lessons/edit/<?= $lesson['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
-                                <form action="<?= $baseUrl ?>lessons/delete/<?= $lesson['id'] ?>" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn btn-red-outline btn-sm" onclick="return confirm('Delete this lesson and all its sessions?')">Delete</button>
-                                </form>
+                                <button type="button" class="btn btn-red-outline btn-sm" onclick="confirmDelete(<?= $lesson['id'] ?>, '<?= htmlspecialchars(addslashes($lesson['title'])) ?>')">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -100,6 +100,34 @@
             </div>
         <?php endif; ?>
     </main>
+
+    <script src="<?= $baseUrl ?>app/Views/js/toast.js"></script>
+    <script>
+        function confirmDelete(id, title) {
+            ConfirmModal.delete({
+                title: 'Delete Lesson',
+                message: `Are you sure you want to delete "${title}" and all its sessions? This action cannot be undone.`,
+                onConfirm: () => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '<?= $baseUrl ?>lessons/delete/' + id;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Check for success/error messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            toast.success(decodeURIComponent(urlParams.get('success')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            toast.error(decodeURIComponent(urlParams.get('error')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 
 </html>

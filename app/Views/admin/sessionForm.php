@@ -19,6 +19,7 @@
                 <a href="<?= $baseUrl ?>sessions" class="active">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
@@ -32,7 +33,7 @@
                 <div class="alert alert-error"><?= htmlspecialchars($_GET['error']) ?></div>
             <?php endif; ?>
 
-            <form action="<?= $baseUrl ?>sessions/<?= $isEditing ? $_SESSION['id'] . '/edit' : 'add' ?>" method="POST">
+            <form action="<?= $baseUrl ?>sessions/<?= $isEditing ? 'edit/' . $session['id'] : 'add' ?>" method="POST">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="lesson_id">Lesson *</label>

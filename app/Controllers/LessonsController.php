@@ -117,8 +117,12 @@ class LessonsController {
 
     public function delete(int $id) {
         $model = new LessonModel();            
-        $model->deleteLesson($id);
-        header("Location: " . $this->baseUrl . "lessons");
+        $result = $model->deleteLesson($id);
+        if ($result) {
+            header("Location: " . $this->baseUrl . "lessons?success=Lesson deleted successfully");
+        } else {
+            header("Location: " . $this->baseUrl . "lessons?error=Failed to delete lesson");
+        }
         exit;
     }
 

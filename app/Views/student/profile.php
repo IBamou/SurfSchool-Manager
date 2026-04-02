@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - <?= $siteName ?? 'SurfManager' ?></title>
+    <title>My Profile - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/profile.css">
     <style>
@@ -84,16 +84,31 @@
             transform: translateY(-2px);
         }
 
+        .btn-secondary {
+            background: #90e0ef;
+            color: #003049;
+        }
+
+        .btn-secondary:hover {
+            background: #78c0d0;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--ocean-blue);
+            color: var(--ocean-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--ocean-blue);
+            color: white;
+        }
+
         .alert {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             border-left: 4px solid;
-            display: none;
-        }
-
-        .alert.show {
-            display: block;
         }
 
         .alert-success {
@@ -131,6 +146,30 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #059669;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border-color: #f87171;
+            color: #dc2626;
+        }
     </style>
 </head>
 
@@ -140,10 +179,7 @@
             <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
             <nav>
                 <a href="<?= $baseUrl ?>dashboard">Dashboard</a>
-                <a href="<?= $baseUrl ?>lessons">Lessons</a>
                 <a href="<?= $baseUrl ?>sessions">Sessions</a>
-                <a href="<?= $baseUrl ?>students">Students</a>
-                <a href="<?= $baseUrl ?>coaches">Coaches</a>
                 <a href="<?= $baseUrl ?>profile" class="active">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
@@ -156,11 +192,13 @@
 
         <div class="profile-card">
             <div class="profile-header">
-                <div class="profile-avatar">👤</div>
+                <div class="profile-avatar">🏄</div>
                 <div class="profile-info">
-                    <h1><?= htmlspecialchars($user['name'] ?? 'Admin') ?></h1>
+                    <h1><?= htmlspecialchars($user['name'] ?? 'Student') ?></h1>
                     <p class="profile-email"><?= htmlspecialchars($user['email'] ?? '') ?></p>
-                    <span class="badge badge-admin">Administrator</span>
+                    <span class="badge badge-<?= strtolower($user['level'] ?? 'beginner') ?>">
+                        <?= htmlspecialchars($user['level'] ?? 'Beginner') ?>
+                    </span>
                 </div>
             </div>
         </div>
@@ -209,20 +247,16 @@
             <div class="detail-section">
                 <h2>Account Information</h2>
                 <div class="detail-row">
-                    <span class="detail-label">User ID</span>
-                    <span class="detail-value">#<?= $user['id'] ?? '' ?></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Email</span>
-                    <span class="detail-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
-                </div>
-                <div class="detail-row">
                     <span class="detail-label">Member Since</span>
                     <span class="detail-value"><?= date('M d, Y', strtotime($user['created_at'] ?? 'now')) ?></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Account Status</span>
-                    <span class="detail-value"><?= ucfirst($user['status'] ?? 'Active') ?></span>
+                    <span class="detail-label">Total Sessions</span>
+                    <span class="detail-value"><?= $totalSessions ?? 0 ?></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Completed Payments</span>
+                    <span class="detail-value">$<?= number_format($totalSpent ?? 0, 2) ?></span>
                 </div>
             </div>
         </div>

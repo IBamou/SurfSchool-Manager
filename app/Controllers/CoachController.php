@@ -51,8 +51,12 @@ class CoachController {
 
     public function delete(int $id) {
         $model = new CoachModel();
-        $model->deleteCoach($id);
-        header("Location: " . $this->baseUrl . "coaches");
+        $result = $model->deleteCoach($id);
+        if ($result) {
+            header("Location: " . $this->baseUrl . "coaches?success=Coach deleted successfully");
+        } else {
+            header("Location: " . $this->baseUrl . "coaches?error=Failed to delete coach");
+        }
         exit;
     }
 
@@ -61,6 +65,25 @@ class CoachController {
         $coach = $model->getCoach($id);
 
         if (!$coach) {
+            header("Location: " . $this->baseUrl . "coaches");
+            exit;
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $data = [
+                "name" => trim($_POST["name"] ?? ''),
+                "email" => trim($_POST["email"] ?? ''),
+                "phone" => trim($_POST["phone"] ?? ''),
+                "speciality" => trim($_POST["speciality"] ?? ''),
+                "experience" => (int)($_POST["experience"] ?? 0),
+            ];
+            
+            if (empty($data["name"]) || empty($data["email"]) || empty($data["speciality"])) {
+                header("Location: " . $this->baseUrl . "coaches/edit/" . $id . "?error=Name, email and speciality are required");
+                exit;
+            }
+            
+            $model->updateCoach($id, $data);
             header("Location: " . $this->baseUrl . "coaches");
             exit;
         }

@@ -7,6 +7,7 @@
     <title><?= htmlspecialchars($session['lesson_title'] ?? 'Session') ?> - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/session.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/toast.css">
 </head>
 
 <body>
@@ -19,6 +20,7 @@
                 <a href="<?= $baseUrl ?>sessions" class="active">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
@@ -104,9 +106,7 @@
         <!-- Edit/Delete Buttons -->
         <div class="detail-buttons">
             <a href="<?= $baseUrl ?>sessions/edit/<?= $session['id'] ?>" class="btn btn-secondary">Edit</a>
-            <form action="<?= $baseUrl ?>sessions/delete/<?= $session['id'] ?>" method="POST" style="display:inline;">
-                <button type="submit" class="btn btn-red-outline" onclick="return confirm('Delete this session?')">Delete</button>
-            </form>
+            <button type="button" class="btn btn-red-outline" onclick="confirmDeleteSession(<?= $session['id'] ?>, '<?= htmlspecialchars(addslashes($session['lesson_title'] ?? 'this session')) ?>')">Delete</button>
         </div>
 
         <!-- Enrolled Students Section -->
@@ -137,9 +137,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <form action="<?= $baseUrl ?>sessions/cancel/<?= $assignment['id'] ?>/<?= $session['id'] ?>" method="POST" class="inline-form">
-                                            <button type="submit" class="btn btn-red-outline btn-sm" onclick="return confirm('Remove this student?')">Remove</button>
-                                        </form>
+                                        <button type="button" class="btn btn-red-outline btn-sm" onclick="confirmRemoveStudent(<?= $assignment['id'] ?>, <?= $session['id'] ?>, '<?= htmlspecialchars(addslashes($assignment['student_name'] ?? 'this student')) ?>')">Remove</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -151,6 +149,49 @@
             <?php endif; ?>
         </div>
     </main>
+
+    <script src="<?= $baseUrl ?>app/Views/js/toast.js"></script>
+    <script>
+        function confirmDeleteSession(id, title) {
+            ConfirmModal.delete({
+                title: 'Delete Session',
+                message: `Are you sure you want to delete "${title}"? All enrolled students will be removed. This action cannot be undone.`,
+                onConfirm: () => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '<?= $baseUrl ?>sessions/delete/' + id;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        function confirmRemoveStudent(assignmentId, sessionId, studentName) {
+            ConfirmModal.delete({
+                title: 'Remove Student',
+                message: `Are you sure you want to remove "${studentName}" from this session?`,
+                confirmText: 'Remove',
+                onConfirm: () => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '<?= $baseUrl ?>sessions/cancel/' + assignmentId + '/' + sessionId;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Check for success/error messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            toast.success(decodeURIComponent(urlParams.get('success')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            toast.error(decodeURIComponent(urlParams.get('error')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 
 </html>

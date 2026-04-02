@@ -51,8 +51,12 @@ class BookingController {
 
     public function cancelBooking(int $assignmentId, int $sessionId) {
         $assignmentModel = new AssignmentModel();
-        $assignmentModel->removeAssignment($assignmentId);
-        header("Location: " . $this->baseUrl . "sessions/" . $sessionId);
+        $result = $assignmentModel->removeAssignment($assignmentId);
+        if ($result) {
+            header("Location: " . $this->baseUrl . "sessions/" . $sessionId . "?success=Student removed from session");
+        } else {
+            header("Location: " . $this->baseUrl . "sessions/" . $sessionId . "?error=Failed to remove student");
+        }
         exit;
     }
 

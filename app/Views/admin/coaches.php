@@ -7,6 +7,7 @@
     <title>Coaches - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/coaches.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/toast.css">
 </head>
 
 <body>
@@ -19,6 +20,7 @@
                 <a href="<?= $baseUrl ?>sessions">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches" class="active">Coaches</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
@@ -52,9 +54,7 @@
                         </div>
                         <div class="coach-actions">
                             <a href="<?= $baseUrl ?>coaches/edit/<?= $coach['id'] ?>" class="btn btn-secondary btn-sm">Edit</a>
-                            <form action="<?= $baseUrl ?>coaches/delete/<?= $coach['id'] ?>" method="POST" onsubmit="return confirm('Delete this coach?')">
-                                <button type="submit" class="btn btn-red-outline btn-sm">Delete</button>
-                            </form>
+                            <button type="button" class="btn btn-red-outline btn-sm" onclick="confirmDelete(<?= $coach['id'] ?>, '<?= htmlspecialchars(addslashes($coach['name'])) ?>')">Delete</button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -68,6 +68,34 @@
             </div>
         <?php endif; ?>
     </main>
+
+    <script src="<?= $baseUrl ?>app/Views/js/toast.js"></script>
+    <script>
+        function confirmDelete(id, name) {
+            ConfirmModal.delete({
+                title: 'Delete Coach',
+                message: `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+                onConfirm: () => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '<?= $baseUrl ?>coaches/delete/' + id;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Check for success/error messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            toast.success(decodeURIComponent(urlParams.get('success')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            toast.error(decodeURIComponent(urlParams.get('error')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 
 </html>

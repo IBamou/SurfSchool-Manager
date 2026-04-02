@@ -19,6 +19,7 @@
                 <a href="<?= $baseUrl ?>sessions">Sessions</a>
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches" class="active">Coaches</a>
+                <a href="<?= $baseUrl ?>profile">Profile</a>
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
@@ -32,7 +33,7 @@
                 <div class="alert alert-error"><?= htmlspecialchars($_GET['error']) ?></div>
             <?php endif; ?>
 
-            <form action="<?= $baseUrl ?>coaches/<?= $isEditing ? 'update' : 'add' ?>" method="POST">
+            <form action="<?= $baseUrl ?>coaches/<?= $isEditing ? 'edit/' . ($coach['id'] ?? '') : 'add' ?>" method="POST">
                 <?php if ($isEditing): ?>
                     <input type="hidden" name="id" value="<?= $coach['id'] ?? '' ?>">
                 <?php endif; ?>

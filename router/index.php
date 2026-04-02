@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();    
 require __DIR__ . '/../vendor/autoload.php';
 
 use Ilyas\SurfManager\Controllers\HomeController;
@@ -112,6 +112,8 @@ if (isset($_SESSION['user'])) {
         $router->get('coaches', [CoachController::class, 'index']);
         $router->get('coaches/add', [CoachController::class, 'add']);
         $router->post('coaches/add', [CoachController::class, 'add']);
+        $router->get('coaches/edit/{id}', [CoachController::class, 'edit']);
+        $router->post('coaches/edit/{id}', [CoachController::class, 'edit']);
         $router->post('coaches/delete/{id}', [CoachController::class, 'delete']);
 
         // profile
@@ -119,8 +121,8 @@ if (isset($_SESSION['user'])) {
 
     } elseif ($_SESSION['user']['role'] === 'user') {
         // Student Dashboard
-        $router->get('dashboard', [ProfileController::class, 'dashboard']);
-        $router->get('sessions', [ProfileController::class, 'sessions']);
+        $router->get('dashboard', [DashboardController::class, 'dashboard']);
+        $router->get('sessions', [SessionsController::class, 'sessions']);
         $router->get('profile', [ProfileController::class, 'profile']);
         $router->get('edit-profile', [ProfileController::class, 'editProfile']);
         $router->get('change-password', [ProfileController::class, 'changePassword']);

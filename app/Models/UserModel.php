@@ -39,6 +39,7 @@ class UserModel extends Model {
             $this->error = true;
         }
     }
+
     public function getUser(int $id = 0, string $email = '') {
         try {
             if ($id > 0) {
@@ -71,7 +72,6 @@ class UserModel extends Model {
         }
     }
 
-
     public function updateUserLevel(int $id, string $level) {
         try {
             $query = 'UPDATE users SET level = :level WHERE id = :id';
@@ -85,4 +85,44 @@ class UserModel extends Model {
         }
     }
 
+    public function updateProfile(int $id, string $name, string $email) {
+        try {
+            $query = 'UPDATE users SET name = :name, email = :email WHERE id = :id';
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            $this->error = true;
+            return false;
+        }
+    }
+
+    public function changePassword(int $id, string $current_password, string $new_password) {
+        try {
+            // First verify the current password
+            $query = 'SELECT password FROM users WHERE id = :id';
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user && password_verify($current_password, $user['password'])) {
+                // Update the password
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $query = 'UPDATE users SET password = :password WHERE id = :id';
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':password', $hashed_password);
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            $this->error = true;
+            return false;
+        }
+    }
 }

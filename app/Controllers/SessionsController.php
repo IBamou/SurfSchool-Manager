@@ -198,8 +198,12 @@ class SessionsController {
 
     public function delete(int $id) {
         $model = new SessionModel();            
-        $model->deleteSession($id);
-        header("Location: " . $this->baseUrl . "sessions");
+        $result = $model->deleteSession($id);
+        if ($result) {
+            header("Location: " . $this->baseUrl . "sessions?success=Session deleted successfully");
+        } else {
+            header("Location: " . $this->baseUrl . "sessions?error=Failed to delete session");
+        }
         exit;
     }
 
