@@ -1,5 +1,5 @@
 <?php
-namespace Ilyas\SurfManager\Configs;
+namespace App\Configs;
 
 use PDO;
 use PDOException;

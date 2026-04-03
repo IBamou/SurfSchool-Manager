@@ -1,16 +1,22 @@
 <?php
-namespace Ilyas\SurfManager\Controllers;
+namespace App\Controllers;
 
-use Ilyas\SurfManager\Models\SessionModel;
-use Ilyas\SurfManager\Models\LessonModel;
-use Ilyas\SurfManager\Models\CoachModel;
-use Ilyas\SurfManager\Models\AssignmentModel;
+use App\Models\SessionModel;
+use App\Models\LessonModel;
+use App\Models\CoachModel;
+use App\Models\AssignmentModel;
 
 class SessionsController {
     public $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager/';
+        $this->baseUrl = $this->getBaseUrl();
+    }
+    
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/surfManager/';
     }
 
     public function sessions() {
@@ -59,9 +65,11 @@ class SessionsController {
         $level = $_GET['level'] ?? '';
         $status = $_GET['status'] ?? '';
         $coachId = $_GET['coach'] ?? '';
+        $noCoachOnly = ($coachId === 'none');
+        $coachId = $noCoachOnly ? '' : $coachId;
 
-        if (!empty($search) || !empty($level) || !empty($status) || !empty($coachId)) {
-            $sessions = $model->searchSessions($search, $level, $status, $coachId);
+        if (!empty($search) || !empty($level) || !empty($status) || !empty($coachId) || $noCoachOnly) {
+            $sessions = $model->searchSessions($search, $level, $status, $coachId, $noCoachOnly);
         } else {
             $sessions = $model->getSessions();
         }

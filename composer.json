@@ -1,16 +1,19 @@
 {
-    "name": "ilyas/surf-manager",
+    "name": "surfmanager/app",
     "type": "project",
+    "description": "A comprehensive surf school management system",
     "autoload": {
         "psr-4": {
-            "Ilyas\\SurfManager\\": "app/"
+            "App\\": "app/"
         }
     },
     "authors": [
         {
-            "name": "Ilyas Ait Bamou",
-            "email": "ilyas0bmp@gmail.com"
+            "name": "SurfManager",
+            "email": "admin@surfmanager.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=8.0"
+    }
 }

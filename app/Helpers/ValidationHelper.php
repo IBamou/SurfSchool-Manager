@@ -1,5 +1,5 @@
 <?php 
-namespace Ilyas\SurfManager\Helpers;
+namespace App\Helpers;
 
 class ValidationHelper {
     public $errors;

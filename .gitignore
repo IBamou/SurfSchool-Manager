@@ -1,1 +1,48 @@
+# Dependencies
 /vendor/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+/cache/
+/tmp/
+/temp/
+
+# Database (optional - uncomment if you want to ignore)
+/*.sql
+/*.sqlite
+/*.db
+
+# Uploads (if you have any)
+/uploads/
+
+# Compiled files
+*.min.css
+*.min.js
+
+# Backup files
+*.bak
+*.backup
+
+# Misc
+*.swp
+*.swo
+
+# XAMPP specific
+C:\xampp\htdocs\

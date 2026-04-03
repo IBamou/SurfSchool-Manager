@@ -1,10 +1,10 @@
 <?php
-namespace Ilyas\SurfManager\Controllers;
+namespace App\Controllers;
 
-use Ilyas\SurfManager\Models\UserModel;
-use Ilyas\SurfManager\Models\AuthModel;
-use Ilyas\SurfManager\Models\StudentModel;
-use Ilyas\SurfManager\Helpers\ValidationHelper;
+use App\Models\UserModel;
+use App\Models\AuthModel;
+use App\Models\StudentModel;
+use App\Helpers\ValidationHelper;
 
 class AuthController{
     public $baseUrl;
@@ -14,18 +14,26 @@ class AuthController{
     private $studentModel;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager/';
+        $this->baseUrl = $this->getBaseUrl();
         $this->authModel = new AuthModel();
         $this->validationModel = new ValidationHelper();
         $this->userModel = new UserModel();
         $this->studentModel = new StudentModel();
         if (!$this->authModel->hasRun) {
-            $this->authModel->setAdmin('Ilyas', 'ilyas0bmp@gmail.com', 'hellohello');
+            // Default admin credentials - CHANGE THESE IN PRODUCTION
+            $this->authModel->setAdmin('Admin', 'admin@surfmanager.com', 'admin123');
         }
+    }
+    
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/surfManager/';
     }
 
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
             if (!isset($_POST['csrf_token']) || !$this->validationModel->verifyCSRFToken($_POST['csrf_token'])) {
                 $_SESSION['error'] = "Invalid request. Please try again.";
                 header('Location: ' . $this->baseUrl . 'login');
@@ -43,12 +51,6 @@ class AuthController{
 
             $user = $this->authModel->verifyLogInData($email, $password);
             
-            // if (isset($user['blocked']) && $user['blocked']) {
-            //     $_SESSION['error'] = "Your account has been blocked. Please contact an administrator.";
-            //     header('Location: ' . $this->baseUrl .'login');
-            //     exit;
-            // }
-
             if ($user && $user['success']) {
                 $userInfo = $this->userModel->getUser(0, $email);
                 if ($userInfo) {
@@ -70,7 +72,6 @@ class AuthController{
 
     public function signup() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $user = new UserModel();
             if (!isset($_POST['csrf_token']) || !$this->validationModel->verifyCSRFToken($_POST['csrf_token'])) {
                 $_SESSION['error'] = "Invalid request. Please try again.";
                 header('Location: ' . $this->baseUrl . 'signup');

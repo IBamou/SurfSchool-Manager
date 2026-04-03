@@ -1,18 +1,24 @@
 <?php
-namespace Ilyas\SurfManager\Controllers;
+namespace App\Controllers;
 
-use Ilyas\SurfManager\Models\UserModel;
-use Ilyas\SurfManager\Models\AssignmentModel;
-use Ilyas\SurfManager\Models\SessionModel;
-use Ilyas\SurfManager\Models\LessonModel;
-use Ilyas\SurfManager\Models\StudentModel;
-use Ilyas\SurfManager\Models\CoachModel;
+use App\Models\UserModel;
+use App\Models\AssignmentModel;
+use App\Models\SessionModel;
+use App\Models\LessonModel;
+use App\Models\StudentModel;
+use App\Models\CoachModel;
 
 class ProfileController {
     public $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager/';
+        $this->baseUrl = $this->getBaseUrl();
+    }
+    
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/surfManager/';
     }
 
     public function profile() {
@@ -30,8 +36,9 @@ class ProfileController {
         // Handle form submissions
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $action = $_POST['action'] ?? '';
-            $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                      strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+            $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                      strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ||
+                      !empty($_POST['ajax']);
             
             if ($action == 'updateProfile') {
                 // Update profile logic

@@ -48,16 +48,7 @@
                               required><?= htmlspecialchars($lesson['description'] ?? '') ?></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="level">Level *</label>
-                    <select id="level" name="level" required>
-                        <option value="">Select Level</option>
-                        <option value="Beginner" <?= (($lesson['level'] ?? '') === 'Beginner') ? 'selected' : '' ?>>Beginner</option>
-                        <option value="Intermediate" <?= (($lesson['level'] ?? '') === 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
-                        <option value="Advanced" <?= (($lesson['level'] ?? '') === 'Advanced') ? 'selected' : '' ?>>Advanced</option>
-                        <option value="Expert" <?= (($lesson['level'] ?? '') === 'Expert') ? 'selected' : '' ?>>Expert</option>
-                    </select>
-                </div>
+
 
                 <div class="form-actions">
                     <a href="<?= $baseUrl ?>lessons" class="btn-back">Cancel</a>

@@ -1,13 +1,20 @@
 <?php
-namespace Ilyas\SurfManager\Controllers;
+namespace App\Controllers;
 
-use Ilyas\SurfManager\Models\CoachModel;
+use App\Models\CoachModel;
+use App\Models\SessionModel;
 
 class CoachController {
     public $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager/';
+        $this->baseUrl = $this->getBaseUrl();
+    }
+    
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/surfManager/';
     }
 
     public function index() {
@@ -51,6 +58,12 @@ class CoachController {
 
     public function delete(int $id) {
         $model = new CoachModel();
+        $sessionModel = new SessionModel();
+        
+        // First, clear the coach from all sessions and set them to pending_coach status
+        $sessionModel->clearCoachFromSessions($id);
+        
+        // Then delete the coach
         $result = $model->deleteCoach($id);
         if ($result) {
             header("Location: " . $this->baseUrl . "coaches?success=Coach deleted successfully");

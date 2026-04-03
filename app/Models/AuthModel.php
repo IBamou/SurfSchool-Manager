@@ -1,9 +1,9 @@
 <?php
-namespace Ilyas\SurfManager\Models;
+namespace App\Models;
 
-use Ilyas\SurfManager\Configs\Model;
-use Ilyas\SurfManager\Helpers\ValidationHelper;
-use Ilyas\SurfManager\Models\StudentModel;
+use App\Configs\Model;
+use App\Helpers\ValidationHelper;
+use App\Models\StudentModel;
 use PDO;
 use PDOException;
 use Exception;

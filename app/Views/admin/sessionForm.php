@@ -39,82 +39,80 @@
                         <label for="lesson_id">Lesson *</label>
                         <select id="lesson_id" name="lesson_id" required>
                             <?php foreach ($lessons as $lesson): ?>
-                                <?php if (isset($_SESSION['lesson_id'])) :?>
-                                    <?php if($_SESSION['lesson_id']  == $lesson['id']) : ?>
+                                    <?php if (isset($session['lesson_id']) && $session['lesson_id'] == $lesson['id']) : ?>
                                         <option value="<?= $lesson['id'] ?>" selected>
                                             <?= htmlspecialchars($lesson['title']) ?> (<?= $lesson['level'] ?>)
                                         </option>
-                                     <?php endif?>
-                                <?php else :?>
-                                <option value="">Select Lesson</option>
-                                <option value="<?= $lesson['id'] ?>">
-                                    <?= htmlspecialchars($lesson['title']) ?> (<?= $lesson['level'] ?>)
-                                </option>
-                                <?php endif;?>
+                                    <?php else : ?>
+                                        <option value="<?= $lesson['id'] ?>">
+                                            <?= htmlspecialchars($lesson['title']) ?> (<?= $lesson['level'] ?>)
+                                        </option>
+                                    <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="coach_id">Coach *</label>
-                        <select id="coach_id" name="coach_id" required>
-                            <option value="">Select Coach</option>
-                            <?php foreach ($coaches as $coach): ?>
-                                <option value="<?= $coach['id'] ?>" <?= (($_SESSION['coach_id'] ?? '') == $coach['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($coach['name']) ?> - <?= htmlspecialchars($coach['speciality'] ?? '') ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                                <label for="coach_id">Coach *</label>
+                                <select id="coach_id" name="coach_id" required>
+                                    <option value="">Select Coach</option>
+                                    <?php foreach ($coaches as $coach): ?>
+                                        <option value="<?= $coach['id'] ?>" <?= (isset($session['coach_id']) && $session['coach_id'] == $coach['id']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($coach['name']) ?> - <?= htmlspecialchars($coach['speciality'] ?? '') ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="datetime">Date & Time *</label>
-                        <input type="datetime-local" id="datetime" name="datetime" 
-                               value="<?= isset($_SESSION['datetime']) ? date('Y-m-d\TH:i', strtotime($_SESSION['datetime'])) : '' ?>" 
-                               required>
+                                <label for="datetime">Date & Time *</label>
+                                <input type="datetime-local" id="datetime" name="datetime" 
+                                       value="<?= isset($session['datetime']) ? date('Y-m-d\TH:i', strtotime($session['datetime'])) : '' ?>" 
+                                       required>
                     </div>
 
                     <div class="form-group">
-                        <label for="duration">Duration (minutes)</label>
-                        <input type="number" id="duration" name="duration" 
-                               value="<?= $_SESSION['duration'] ?? 60 ?>" min="15" step="15">
+                                <label for="duration">Duration (minutes)</label>
+                                <input type="number" id="duration" name="duration" 
+                                       value="<?= $session['duration'] ?? 60 ?>" min="15" step="15">
                     </div>
 
                     <div class="form-group">
-                        <label for="location">Location *</label>
-                        <input type="text" id="location" name="location" 
-                               value="<?= htmlspecialchars($_SESSION['location'] ?? '') ?>"
-                               placeholder="e.g., Main Beach - Left Point" required>
+                                <label for="location">Location *</label>
+                                <input type="text" id="location" name="location" 
+                                       value="<?= htmlspecialchars($session['location'] ?? '') ?>"
+                                       placeholder="e.g., Main Beach - Left Point" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="price">Price ($)</label>
-                        <input type="number" id="price" name="price" 
-                               value="<?= $_SESSION['price'] ?? 0 ?>" min="0" step="0.01">
+                                <label for="price">Price ($)</label>
+                                <input type="number" id="price" name="price" 
+                                       value="<?= $session['price'] ?? 0 ?>" min="0" step="0.01">
                     </div>
 
                     <div class="form-group">
-                        <label for="max_spots">Max Spots</label>
-                        <input type="number" id="max_spots" name="max_spots" 
-                               value="<?= $_SESSION['max_spots'] ?? 8 ?>" min="1" max="50">
+                                <label for="max_spots">Max Spots</label>
+                                <input type="number" id="max_spots" name="max_spots" 
+                                       value="<?= $session['max_spots'] ?? 8 ?>" min="1" max="50">
                     </div>
 
                     <?php if ($isEditing): ?>
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select id="status" name="status">
-                            <option value="available" <?= (($_SESSION['status'] ?? '') === 'available') ? 'selected' : '' ?>>Available</option>
-                            <option value="completed" <?= (($_SESSION['status'] ?? '') === 'completed') ? 'selected' : '' ?>>Completed</option>
-                            <option value="cancelled" <?= (($_SESSION['status'] ?? '') === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
+                            <option value="available" <?= (isset($session['status']) && $session['status'] === 'available') ? 'selected' : '' ?>>Available</option>
+                            <option value="pending_coach" <?= (isset($session['status']) && $session['status'] === 'pending_coach') ? 'selected' : '' ?>>Pending Coach</option>
+                            <option value="completed" <?= (isset($session['status']) && $session['status'] === 'completed') ? 'selected' : '' ?>>Completed</option>
+                            <option value="cancelled" <?= (isset($session['status']) && $session['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
                         </select>
                     </div>
                     <?php endif; ?>
 
-                    <div class="form-group full-width">
-                        <label for="requirements">Requirements</label>
-                        <textarea id="requirements" name="requirements" 
-                                  placeholder="Any requirements for this session..."><?= htmlspecialchars($_SESSION['requirements'] ?? '') ?></textarea>
-                    </div>
+                                    <div class="form-group full-width">
+                                        <label for="requirements">Requirements</label>
+                                        <textarea id="requirements" name="requirements" 
+                                           placeholder="Any requirements for this session..."><?= htmlspecialchars($session['requirements'] ?? '') ?></textarea>
+                                    </div>
                 </div>
 
                 <div class="form-actions">

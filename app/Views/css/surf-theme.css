@@ -63,6 +63,7 @@ header {
 
 .header-content {
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
 }
@@ -278,6 +279,12 @@ main {
 .badge-pending {
     background: #fef3c7;
     color: #d97706;
+}
+
+.badge-pending-coach {
+    background: #fef3c7;
+    color: #d97706;
+    border: 2px solid #f59e0b;
 }
 
 .badge-paid {

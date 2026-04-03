@@ -1,7 +1,7 @@
 <?php
-namespace Ilyas\SurfManager\Models;
+namespace App\Models;
 
-use Ilyas\SurfManager\Configs\Model;
+use App\Configs\Model;
 use PDO;
 use Exception;
 
@@ -142,7 +142,20 @@ class SessionModel extends Model {
         }
     }
 
-    public function searchSessions(string $search = '', string $level = '', string $status = '', string $coachId = '') {
+    public function clearCoachFromSessions(int $coachId) {
+        try {
+            $query = 'UPDATE sessions SET coach_id = NULL, status = "pending_coach" WHERE coach_id = :coach_id';
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':coach_id', $coachId);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            $this->error = true;
+            return false;
+        }
+    }
+
+    public function searchSessions(string $search = '', string $level = '', string $status = '', string $coachId = '', bool $noCoachOnly = false) {
         try {
             $query = 'SELECT s.*, l.title as lesson_title, l.level as lesson_level,
                       c.name as coach_name, c.speciality as coach_speciality
@@ -171,6 +184,10 @@ class SessionModel extends Model {
             if (!empty($coachId)) {
                 $query .= ' AND s.coach_id = :coach_id';
                 $params['coach_id'] = (int)$coachId;
+            }
+
+            if ($noCoachOnly) {
+                $query .= ' AND s.coach_id IS NULL';
             }
 
             $query .= ' ORDER BY s.datetime DESC';

@@ -1,13 +1,19 @@
 <?php
-namespace Ilyas\SurfManager\Controllers;
+namespace App\Controllers;
 
-use Ilyas\SurfManager\Models\StudentModel;
+use App\Models\StudentModel;
 
 class StudentsController {
     public $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = 'http://localhost/surfManager/';
+        $this->baseUrl = $this->getBaseUrl();
+    }
+    
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/surfManager/';
     }
 
     public function index() {

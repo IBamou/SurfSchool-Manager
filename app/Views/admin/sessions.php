@@ -75,21 +75,23 @@
                     <option value="Expert" <?= (isset($_GET['level']) && $_GET['level'] === 'Expert') ? 'selected' : '' ?>>Expert</option>
                 </select>
 
-                <select name="status" onchange="this.form.submit()">
-                    <option value="">All Status</option>
-                    <option value="available" <?= (isset($_GET['status']) && $_GET['status'] === 'available') ? 'selected' : '' ?>>Available</option>
-                    <option value="completed" <?= (isset($_GET['status']) && $_GET['status'] === 'completed') ? 'selected' : '' ?>>Completed</option>
-                    <option value="cancelled" <?= (isset($_GET['status']) && $_GET['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
-                </select>
+            <select name="status" onchange="this.form.submit()">
+                <option value="">All Status</option>
+                <option value="available" <?= (isset($_GET['status']) && $_GET['status'] === 'available') ? 'selected' : '' ?>>Available</option>
+                <option value="pending_coach" <?= (isset($_GET['status']) && $_GET['status'] === 'pending_coach') ? 'selected' : '' ?>>Pending Coach</option>
+                <option value="completed" <?= (isset($_GET['status']) && $_GET['status'] === 'completed') ? 'selected' : '' ?>>Completed</option>
+                <option value="cancelled" <?= (isset($_GET['status']) && $_GET['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
+            </select>
 
-                <select name="coach" onchange="this.form.submit()">
-                    <option value="">All Coaches</option>
-                    <?php foreach ($coaches ?? [] as $coach): ?>
-                        <option value="<?= $coach['id'] ?>" <?= (isset($_GET['coach']) && $_GET['coach'] == $coach['id']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($coach['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <select name="coach" onchange="this.form.submit()">
+                <option value="">All Coaches</option>
+                <?php foreach ($coaches ?? [] as $coach): ?>
+                    <option value="<?= $coach['id'] ?>" <?= (isset($_GET['coach']) && $_GET['coach'] == $coach['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($coach['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+                <option value="none" <?= (isset($_GET['coach']) && $_GET['coach'] === 'none') ? 'selected' : '' ?>>No Coach Assigned</option>
+            </select>
             </div>
         </div>
 
@@ -109,37 +111,48 @@
                 <?php foreach ($sessions as $session): ?>
                     <div class="lesson-card">
                     <div class="lesson-content">
-                            <div class="lesson-badges">
-                                <span class="badge badge-<?= strtolower($session['lesson_level'] ?? 'beginner') ?>">
-                                    <?= htmlspecialchars($session['lesson_level'] ?? 'Beginner') ?>
-                                </span>
-                                <span class="badge badge-<?= strtolower($session['status'] ?? 'available') ?>">
-                                    <?= htmlspecialchars(ucfirst($session['status'] ?? 'Available')) ?>
-                                </span>
-                            </div>
+                        <div class="lesson-badges">
+                            <span class="badge badge-<?= strtolower($session['lesson_level'] ?? 'beginner') ?>">
+                                <?= htmlspecialchars($session['lesson_level'] ?? 'Beginner') ?>
+                            </span>
+                            <?php
+                                $statusClass = strtolower($session['status'] ?? 'available');
+                                $statusText = ucfirst($session['status'] ?? 'Available');
+                                if ($session['status'] === 'pending_coach') {
+                                    $statusClass = 'pending-coach';
+                                    $statusText = 'Pending Coach';
+                                }
+                            ?>
+                            <span class="badge badge-<?= $statusClass ?>">
+                                <?= htmlspecialchars($statusText) ?>
+                            </span>
+                        </div>
                             
                             <h2 class="lesson-title"><?= htmlspecialchars($session['lesson_title'] ?? 'Session') ?></h2>
                             
-                            <div class="lesson-meta">
-                                <div class="meta-item">📅 <?= date('M d, Y H:i', strtotime($session['datetime'])) ?></div>
-                                <div class="meta-item">👤 <?= htmlspecialchars($session['coach_name'] ?? 'TBD') ?></div>
-                                <div class="meta-item">📍 <?= htmlspecialchars($session['location'] ?? 'TBD') ?></div>
-                                <div class="meta-item">⏱ <?= $session['duration'] ?? 60 ?>min</div>
-                                <div class="meta-item">👥 <?= $session['spots_available'] ?? '?' ?>/<?= $session['max_spots'] ?? '?' ?> spots</div>
-                            </div>
+                        <div class="lesson-meta">
+                            <div class="meta-item">📅 <?= date('M d, Y H:i', strtotime($session['datetime'])) ?></div>
+                            <div class="meta-item">👤 <?= htmlspecialchars($session['coach_name'] ?? '<span style="color: #d97706; font-weight: bold;">No Coach Assigned</span>') ?></div>
+                            <div class="meta-item">📍 <?= htmlspecialchars($session['location'] ?? 'TBD') ?></div>
+                            <div class="meta-item">⏱ <?= $session['duration'] ?? 60 ?>min</div>
+                            <div class="meta-item">👥 <?= $session['spots_available'] ?? '?' ?>/<?= $session['max_spots'] ?? '?' ?> spots</div>
+                        </div>
 
-                            <div class="lesson-footer">
-                                <div class="lesson-price">
-                                    $<?= number_format($session['price'] ?? 0, 2) ?>
-                                    <small>/person</small>
-                                </div>
-                                <div class="lesson-actions">
-                                    <a href="<?= $baseUrl ?>sessions/<?= $session['id'] ?>" class="btn btn-secondary btn-sm">View</a>
-                                    <?php if (($session['status'] ?? '') === 'available' && $session['spots_available'] > 0): ?>
-                                        <a href="<?= $baseUrl ?>sessions/book/<?= $session['id'] ?>" class="btn btn-primary btn-sm">Book</a>
-                                    <?php endif; ?>
-                                </div>
+                        <div class="lesson-footer">
+                            <div class="lesson-price">
+                                $<?= number_format($session['price'] ?? 0, 2) ?>
+                                <small>/person</small>
                             </div>
+                            <div class="lesson-actions">
+                                <a href="<?= $baseUrl ?>sessions/<?= $session['id'] ?>" class="btn btn-secondary btn-sm">View</a>
+                                <?php if (($session['status'] ?? '') === 'available' && $session['spots_available'] > 0): ?>
+                                    <a href="<?= $baseUrl ?>sessions/book/<?= $session['id'] ?>" class="btn btn-primary btn-sm">Book</a>
+                                <?php endif; ?>
+                                <?php if (($session['status'] ?? '') === 'pending_coach'): ?>
+                                    <a href="<?= $baseUrl ?>sessions/edit/<?= $session['id'] ?>" class="btn btn-primary btn-sm">Assign Coach</a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -2,15 +2,15 @@
 session_start();    
 require __DIR__ . '/../vendor/autoload.php';
 
-use Ilyas\SurfManager\Controllers\HomeController;
-use Ilyas\SurfManager\Controllers\DashboardController;
-use Ilyas\SurfManager\Controllers\LessonsController;
-use Ilyas\SurfManager\Controllers\SessionsController;
-use Ilyas\SurfManager\Controllers\StudentsController;
-use Ilyas\SurfManager\Controllers\CoachController;
-use Ilyas\SurfManager\Controllers\AuthController;
-use Ilyas\SurfManager\Controllers\ProfileController;
-use Ilyas\SurfManager\Controllers\BookingController;
+use App\Controllers\HomeController;
+use App\Controllers\DashboardController;
+use App\Controllers\LessonsController;
+use App\Controllers\SessionsController;
+use App\Controllers\StudentsController;
+use App\Controllers\CoachController;
+use App\Controllers\AuthController;
+use App\Controllers\ProfileController;
+use App\Controllers\BookingController;
 
 class Router {
     private $routes = [];
@@ -31,10 +31,11 @@ class Router {
         ];
     }
 
-    public function run() {
+    public function route() {
         $basePath = '/surfManager';
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $currentUrl = trim(str_replace($basePath, '', $path), '/');
+        if ($currentUrl === '') $currentUrl = '/';
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         foreach ($this->routes as $route) {
@@ -118,15 +119,17 @@ if (isset($_SESSION['user'])) {
 
         // profile
         $router->get('profile', [ProfileController::class, 'profile']);
+        $router->post('profile', [ProfileController::class, 'profile']);
 
     } elseif ($_SESSION['user']['role'] === 'user') {
         // Student Dashboard
         $router->get('dashboard', [DashboardController::class, 'dashboard']);
         $router->get('sessions', [SessionsController::class, 'sessions']);
         $router->get('profile', [ProfileController::class, 'profile']);
+        $router->post('profile', [ProfileController::class, 'profile']);
         $router->get('edit-profile', [ProfileController::class, 'editProfile']);
         $router->get('change-password', [ProfileController::class, 'changePassword']);
     }
 }
 
-$router->run();
+$router->route();

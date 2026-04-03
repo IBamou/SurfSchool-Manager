@@ -1,7 +1,7 @@
 <?php
-namespace Ilyas\SurfManager\Models;
+namespace App\Models;
 
-use Ilyas\SurfManager\Configs\Model;
+use App\Configs\Model;
 use PDO;
 use Exception;
 

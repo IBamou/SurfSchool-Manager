@@ -80,7 +80,7 @@
         }
 
         .btn-primary:hover {
-            background: var(--ocean-dark);
+            background: var(--ocean-deep);
             transform: translateY(-2px);
         }
 
@@ -292,23 +292,34 @@
                 
                 const formData = new FormData(editProfileForm);
                 formData.append('action', 'updateProfile');
+                formData.append('ajax', '1');
                 
                 editProfileBtn.innerHTML = '<span class="spinner"></span>Saving...';
                 editProfileBtn.classList.add('loading');
                 
                 fetch('<?= $baseUrl ?>profile', {
                     method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert('success', data.message);
-                    } else {
-                        showAlert('error', data.message);
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.success) {
+                            showAlert('success', data.message);
+                        } else {
+                            showAlert('error', data.message);
+                        }
+                    } catch (e) {
+                        showAlert('error', 'Server error: ' + text);
                     }
                 })
                 .catch(error => {
+                    console.error('Error:', error);
                     showAlert('error', 'An error occurred. Please try again.');
                 })
                 .finally(() => {
@@ -336,24 +347,35 @@
                 
                 const formData = new FormData(changePasswordForm);
                 formData.append('action', 'changePassword');
+                formData.append('ajax', '1');
                 
                 changePasswordBtn.innerHTML = '<span class="spinner"></span>Changing...';
                 changePasswordBtn.classList.add('loading');
                 
                 fetch('<?= $baseUrl ?>profile', {
                     method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlert('success', data.message);
-                        changePasswordForm.reset();
-                    } else {
-                        showAlert('error', data.message);
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.success) {
+                            showAlert('success', data.message);
+                            changePasswordForm.reset();
+                        } else {
+                            showAlert('error', data.message);
+                        }
+                    } catch (e) {
+                        showAlert('error', 'Server error: ' + text);
                     }
                 })
                 .catch(error => {
+                    console.error('Error:', error);
                     showAlert('error', 'An error occurred. Please try again.');
                 })
                 .finally(() => {

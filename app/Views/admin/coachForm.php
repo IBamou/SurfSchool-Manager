@@ -48,10 +48,7 @@
                     <input type="email" id="email" name="email" placeholder="coach@surf.com" value="<?= htmlspecialchars($coach['email'] ?? '') ?>" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="text" id="phone" name="phone" placeholder="+1 234 567 8900" value="<?= htmlspecialchars($coach['phone'] ?? '') ?>">
-                </div>
+
 
                 <div class="form-group">
                     <label for="speciality">Speciality *</label>
