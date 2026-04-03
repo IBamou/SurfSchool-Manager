@@ -113,8 +113,7 @@ surfManager/
 ├── vendor/                           # Composer dependencies
 ├── .gitignore
 ├── composer.json
-├── README.md
-└── index.php
+└── README.md
 ```
 
 ## Namespace Structure
