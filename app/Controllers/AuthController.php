@@ -1,8 +1,6 @@
 <?php
 namespace Ilyas\SurfManager\Controllers;
 
-use Ilyas\SurfManager\Models\SessionModel;
-use Ilyas\SurfManager\Models\AssignmentModel;
 use Ilyas\SurfManager\Models\UserModel;
 use Ilyas\SurfManager\Models\AuthModel;
 use Ilyas\SurfManager\Models\StudentModel;

@@ -7,6 +7,7 @@
     <title>Login - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/form.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/toast.css">
 </head>
 
 <body>
