@@ -38,7 +38,8 @@
                     <input type="hidden" name="id" value="<?= $coach['id'] ?? '' ?>">
                 <?php endif; ?>
 
-                <div class="form-group">
+                <div class="form-grid">
+                    <div class="form-group">
                     <label for="name">Full Name *</label>
                     <input type="text" id="name" name="name" placeholder="John Smith" value="<?= htmlspecialchars($coach['name'] ?? '') ?>" required>
                 </div>
@@ -50,7 +51,7 @@
 
 
 
-                <div class="form-group">
+                <div class="form-group full-width">
                     <label for="speciality">Speciality *</label>
                     <select id="speciality" name="speciality" required>
                         <option value="">Select Speciality</option>
@@ -65,6 +66,7 @@
                 <div class="form-group">
                     <label for="experience">Years of Experience *</label>
                     <input type="number" id="experience" name="experience" value="<?= $coach['experience'] ?? 1 ?>" min="0" max="50" required>
+                </div>
                 </div>
 
                 <div class="form-actions">
