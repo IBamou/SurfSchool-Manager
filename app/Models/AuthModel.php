@@ -23,7 +23,8 @@ class AuthModel extends Model {
     public function setAdmin($name, $email, $password) {
 
         $this->hasRun = false;
-        if ($this->hasRun) {
+
+        if (!$this->hasRun) {
 
             // Hash password
             if ($this->validationModel->verifyInputs($name, $email, $password)) {
@@ -35,15 +36,15 @@ class AuthModel extends Model {
             try {
             $this->db->beginTransaction();
 
-            // Check if user exists
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            $userExists = $stmt->rowCount() > 0;
-
             // Demote ALL existing mainadmins and admins (only 1 mainadmin allowed)
             // $this->db->exec("UPDATE users SET role='user' WHERE role IN ('superAdmin', 'admin')");
             $stmt = $this->db->prepare("UPDATE users SET role='user'");
             $stmt->execute();
+
+            // Check if user exists
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $userExists = $stmt->rowCount() > 0;
 
             if ($userExists) {
             // User exists → promote to mainadmin
@@ -56,7 +57,7 @@ class AuthModel extends Model {
             }
 
             $this->db->commit();
-            $hasRun = true;
+            $this->hasRun = true;
             return true;
 
             } catch (Exception $e) {
