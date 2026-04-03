@@ -19,7 +19,9 @@ class AuthController{
         $this->validationModel = new ValidationHelper();
         $this->userModel = new UserModel();
         $this->studentModel = new StudentModel();
-        $this->authModel->setAdmin('Ilyas', 'ilyas0bmp@gmail.com', 'hellohello');
+        if (!$this->authModel->hasRun) {
+            $this->authModel->setAdmin('Ilyas', 'ilyas0bmp@gmail.com', 'hellohello');
+        }
     }
 
     public function login() {

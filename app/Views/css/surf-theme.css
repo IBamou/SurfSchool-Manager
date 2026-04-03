@@ -67,11 +67,24 @@ header {
     align-items: center;
 }
 
+.nav-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .logo {
     font-family: 'Allison', cursive;
     font-size: 2.2rem;
     color: var(--ocean-deep);
     text-decoration: none;
+    margin-right: 1.5rem;
 }
 
 .logo span {

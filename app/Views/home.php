@@ -10,9 +10,10 @@
 </head>
 
 <body>
-    <header class="landing-header">
-        <div class="container">
-            <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+<header class="landing-header">
+    <div class="container">
+        <a href="<?= $baseUrl ?>" class="logo">Surf<span>Manager</span></a>
+        <div class="nav-wrapper">
             <nav>
                 <?php if (isset($_SESSION['user'])): ?>
                     <a href="<?= $baseUrl ?>dashboard" class="btn btn-primary">Go to Dashboard</a>
@@ -23,7 +24,8 @@
                 <?php endif; ?>
             </nav>
         </div>
-    </header>
+    </div>
+</header>
 
     <section class="hero landing-hero">
         <div class="container">

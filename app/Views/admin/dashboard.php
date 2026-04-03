@@ -10,9 +10,10 @@
 </head>
 
 <body>
-    <header>
-        <div class="container header-content">
-            <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
+<header>
+    <div class="container header-content">
+        <a href="<?= $baseUrl ?>dashboard" class="logo">Surf<span>Manager</span></a>
+        <div class="nav-wrapper">
             <nav>
                 <a href="<?= $baseUrl ?>dashboard" class="active">Dashboard</a>
                 <a href="<?= $baseUrl ?>lessons">Lessons</a>
@@ -23,7 +24,8 @@
                 <a href="<?= $baseUrl ?>auth/logout">Logout</a>
             </nav>
         </div>
-    </header>
+    </div>
+</header>
 
     <section class="hero hero-sm">
         <div class="container">

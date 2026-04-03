@@ -13,20 +13,26 @@ class AuthModel extends Model {
     public $error = false;
     public $validationModel;
 
+    public $hasRun;
+
     public function __construct() {
         parent::__construct();   
         $this->validationModel = new ValidationHelper();
     }
 
     public function setAdmin($name, $email, $password) {
-        // Hash password
-        if ($this->validationModel->verifyInputs($name, $email, $password)) {
-            die("Invalid inputs");
-        }
 
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $this->hasRun = false;
+        if ($this->hasRun) {
 
-        try {
+            // Hash password
+            if ($this->validationModel->verifyInputs($name, $email, $password)) {
+                die("Invalid inputs");
+            }
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            try {
             $this->db->beginTransaction();
 
             // Check if user exists
@@ -40,22 +46,26 @@ class AuthModel extends Model {
             $stmt->execute();
 
             if ($userExists) {
-                // User exists → promote to mainadmin
-                $stmt = $this->db->prepare("UPDATE users SET role='admin' WHERE email = ?");
-                $stmt->execute([$email]);
+            // User exists → promote to mainadmin
+            $stmt = $this->db->prepare("UPDATE users SET role='admin' WHERE email = ?");
+            $stmt->execute([$email]);
             } else {
-                // New user → insert as mainadmin
-                $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')");
-                $stmt->execute([$name, $email, $hashedPassword]);
+            // New user → insert as mainadmin
+            $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')");
+            $stmt->execute([$name, $email, $hashedPassword]);
             }
 
             $this->db->commit();
+            $hasRun = true;
             return true;
-        } catch (Exception $e) {
+
+            } catch (Exception $e) {
             $this->db->rollBack();
             return "Error: " . $e->getMessage();
+            }
         }
     }
+
     public function verifyLogInData($email, $password) {
         try {
             // fetch the user by email
