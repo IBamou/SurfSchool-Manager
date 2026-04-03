@@ -7,6 +7,7 @@
     <title>Surf Sessions - <?= $siteName ?? 'SurfManager' ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/surf-theme.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/sessions.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>app/Views/css/toast.css">
 </head>
 
 <body>
@@ -54,45 +55,62 @@
 
         <!-- Search Section -->
         <div class="search-section">
-            <form action="<?= $baseUrl ?>sessions" method="GET" class="search-form">
-                <div class="search-input">
-                    <input 
-                        type="text" 
-                        name="search" 
-                        placeholder="Search sessions, coaches, locations..." 
-                        value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
-                    >
+            <form id="searchForm" action="<?= $baseUrl ?>sessions" method="GET" class="search-form">
+                <div class="search-input-wrapper">
+                    <label class="search-label">Search</label>
+                    <div class="search-input">
+                        <svg class="search-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Search sessions, coaches, locations..." 
+                            value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
+                        >
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
+                <div class="filters-wrapper">
+                    <div class="filter-group">
+                        <label for="levelFilter">Level</label>
+                        <select name="level" id="levelFilter">
+                            <option value="">All Levels</option>
+                            <option value="Beginner" <?= (isset($_GET['level']) && $_GET['level'] === 'Beginner') ? 'selected' : '' ?>>Beginner</option>
+                            <option value="Intermediate" <?= (isset($_GET['level']) && $_GET['level'] === 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
+                            <option value="Advanced" <?= (isset($_GET['level']) && $_GET['level'] === 'Advanced') ? 'selected' : '' ?>>Advanced</option>
+                            <option value="Expert" <?= (isset($_GET['level']) && $_GET['level'] === 'Expert') ? 'selected' : '' ?>>Expert</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select name="status" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="available" <?= (isset($_GET['status']) && $_GET['status'] === 'available') ? 'selected' : '' ?>>Available</option>
+                            <option value="completed" <?= (isset($_GET['status']) && $_GET['status'] === 'completed') ? 'selected' : '' ?>>Completed</option>
+                            <option value="cancelled" <?= (isset($_GET['status']) && $_GET['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="coachFilter">Coach</label>
+                        <select name="coach" id="coachFilter">
+                            <option value="">All Coaches</option>
+                            <?php foreach ($coaches ?? [] as $coach): ?>
+                                <option value="<?= $coach['id'] ?>" <?= (isset($_GET['coach']) && $_GET['coach'] == $coach['id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($coach['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="none" <?= (isset($_GET['coach']) && $_GET['coach'] === 'none') ? 'selected' : '' ?>>No Coach</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="<?= $baseUrl ?>sessions" class="btn btn-secondary">Clear</a>
+                </div>
             </form>
-
-            <div class="filters-row">
-                <select name="level" onchange="this.form.submit()">
-                    <option value="">All Levels</option>
-                    <option value="Beginner" <?= (isset($_GET['level']) && $_GET['level'] === 'Beginner') ? 'selected' : '' ?>>Beginner</option>
-                    <option value="Intermediate" <?= (isset($_GET['level']) && $_GET['level'] === 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
-                    <option value="Advanced" <?= (isset($_GET['level']) && $_GET['level'] === 'Advanced') ? 'selected' : '' ?>>Advanced</option>
-                    <option value="Expert" <?= (isset($_GET['level']) && $_GET['level'] === 'Expert') ? 'selected' : '' ?>>Expert</option>
-                </select>
-
-            <select name="status" onchange="this.form.submit()">
-                <option value="">All Status</option>
-                <option value="available" <?= (isset($_GET['status']) && $_GET['status'] === 'available') ? 'selected' : '' ?>>Available</option>
-                <option value="pending_coach" <?= (isset($_GET['status']) && $_GET['status'] === 'pending_coach') ? 'selected' : '' ?>>Pending Coach</option>
-                <option value="completed" <?= (isset($_GET['status']) && $_GET['status'] === 'completed') ? 'selected' : '' ?>>Completed</option>
-                <option value="cancelled" <?= (isset($_GET['status']) && $_GET['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
-            </select>
-
-            <select name="coach" onchange="this.form.submit()">
-                <option value="">All Coaches</option>
-                <?php foreach ($coaches ?? [] as $coach): ?>
-                    <option value="<?= $coach['id'] ?>" <?= (isset($_GET['coach']) && $_GET['coach'] == $coach['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($coach['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-                <option value="none" <?= (isset($_GET['coach']) && $_GET['coach'] === 'none') ? 'selected' : '' ?>>No Coach Assigned</option>
-            </select>
-            </div>
         </div>
 
         <!-- Actions Row -->
@@ -166,6 +184,20 @@
             </div>
         <?php endif; ?>
     </main>
+
+    <script src="<?= $baseUrl ?>app/Views/js/toast.js"></script>
+    <script>
+        // Check for success/error messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            toast.success(decodeURIComponent(urlParams.get('success')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            toast.error(decodeURIComponent(urlParams.get('error')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 
 </html>

@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS assignments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     session_id INT NOT NULL,
     student_id INT NOT NULL,
-    payment_status ENUM('pending', 'paid', 'refunded') DEFAULT 'pending',
+    payment_status ENUM('pending', 'paid') DEFAULT 'pending',
     assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE

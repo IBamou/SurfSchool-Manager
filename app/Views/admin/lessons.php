@@ -36,27 +36,39 @@
     <main class="container">
         <!-- Search Section -->
         <div class="search-section">
-            <form action="<?= $baseUrl ?>lessons" method="GET" class="search-form">
-                <div class="search-input">
-                    <input 
-                        type="text" 
-                        name="search" 
-                        placeholder="Search lessons..." 
-                        value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
-                    >
+            <form id="searchForm" action="<?= $baseUrl ?>lessons" method="GET" class="search-form">
+                <div class="search-input-wrapper">
+                    <label class="search-label">Search</label>
+                    <div class="search-input">
+                        <svg class="search-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Search lessons..." 
+                            value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>"
+                        >
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
+                <div class="filters-wrapper">
+                    <div class="filter-group">
+                        <label for="levelFilter">Level</label>
+                        <select name="level" id="levelFilter">
+                            <option value="">All Levels</option>
+                            <option value="Beginner" <?= (isset($_GET['level']) && $_GET['level'] === 'Beginner') ? 'selected' : '' ?>>Beginner</option>
+                            <option value="Intermediate" <?= (isset($_GET['level']) && $_GET['level'] === 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
+                            <option value="Advanced" <?= (isset($_GET['level']) && $_GET['level'] === 'Advanced') ? 'selected' : '' ?>>Advanced</option>
+                            <option value="Expert" <?= (isset($_GET['level']) && $_GET['level'] === 'Expert') ? 'selected' : '' ?>>Expert</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="<?= $baseUrl ?>lessons" class="btn btn-secondary">Clear</a>
+                </div>
             </form>
-
-            <div class="filters-row">
-                <select name="level" onchange="this.form.submit()">
-                    <option value="">All Levels</option>
-                    <option value="Beginner" <?= (isset($_GET['level']) && $_GET['level'] === 'Beginner') ? 'selected' : '' ?>>Beginner</option>
-                    <option value="Intermediate" <?= (isset($_GET['level']) && $_GET['level'] === 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
-                    <option value="Advanced" <?= (isset($_GET['level']) && $_GET['level'] === 'Advanced') ? 'selected' : '' ?>>Advanced</option>
-                    <option value="Expert" <?= (isset($_GET['level']) && $_GET['level'] === 'Expert') ? 'selected' : '' ?>>Expert</option>
-                </select>
-            </div>
         </div>
 
         <!-- Actions Row -->

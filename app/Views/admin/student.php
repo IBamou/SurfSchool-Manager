@@ -83,14 +83,13 @@
                                 <td><?= htmlspecialchars($assignment['coach_name'] ?? 'TBD') ?></td>
                                 <td><?= htmlspecialchars($assignment['location'] ?? 'TBD') ?></td>
                                 <td>
-                                    <div class="payment-control">
-                                        <select id="payment-<?= $assignment['id'] ?>" data-original="<?= htmlspecialchars($assignment['payment_status'] ?? 'pending') ?>">
-                                            <option value="pending" <?= ($assignment['payment_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                            <option value="paid" <?= ($assignment['payment_status'] ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
-                                            <option value="refunded" <?= ($assignment['payment_status'] ?? '') === 'refunded' ? 'selected' : '' ?>>Refunded</option>
-                                        </select>
-                                        <button type="button" class="payment-btn" id="pay-btn-<?= $assignment['id'] ?>" onclick="updatePayment(<?= $assignment['id'] ?>)" disabled>Save</button>
-                                    </div>
+                                <div class="payment-control">
+                                    <select id="payment-<?= $assignment['id'] ?>" data-original="<?= htmlspecialchars($assignment['payment_status'] ?? 'pending') ?>">
+                                        <option value="pending" <?= ($assignment['payment_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
+                                        <option value="paid" <?= ($assignment['payment_status'] ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
+                                    </select>
+                                    <button type="button" class="payment-btn" id="pay-btn-<?= $assignment['id'] ?>" onclick="updatePayment(<?= $assignment['id'] ?>)" disabled>Save</button>
+                                </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -23,6 +23,7 @@ class LessonsController {
         $search = $_GET['search'] ?? '';
         $level = $_GET['level'] ?? '';
 
+        // Search even if search is empty but level filter is applied
         if (!empty($search) || !empty($level)) {
             $lessons = $model->searchLessons($search, $level);
         } else {
