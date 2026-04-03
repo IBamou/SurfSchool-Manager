@@ -156,21 +156,26 @@ const toast = new ToastManager();
 
 // Check for URL parameters to show toast messages
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, checking for toast params');
     const urlParams = new URLSearchParams(window.location.search);
+    console.log('URL params:', urlParams.toString());
     
     if (urlParams.get('success')) {
+        console.log('Showing success toast:', urlParams.get('success'));
         toast.success(decodeURIComponent(urlParams.get('success')));
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     if (urlParams.get('error')) {
+        console.log('Showing error toast:', urlParams.get('error'));
         toast.error(decodeURIComponent(urlParams.get('error')));
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     if (urlParams.get('warning')) {
+        console.log('Showing warning toast:', urlParams.get('warning'));
         toast.warning(decodeURIComponent(urlParams.get('warning')));
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);

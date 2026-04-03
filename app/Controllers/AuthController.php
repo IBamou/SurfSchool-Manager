@@ -11,7 +11,6 @@ class AuthController{
     private $authModel;
     private $validationModel;
     private $userModel;
-
     private $studentModel;
 
     public function __construct() {
@@ -54,14 +53,12 @@ class AuthController{
                     $this->authModel->createSession($userInfo);
                     session_regenerate_id(true);
                     unset($_SESSION['csrf_token']);
-                    header('Location: ' . $this->baseUrl . 'dashboard');
+                    header('Location: ' . $this->baseUrl . 'dashboard?success=Login successful');
                     exit;
                 }
-
             } else {
-                echo '2';
                 $_SESSION['error'] = "Invalid email or password.";
-                header('Location: ' . $this->baseUrl . 'login');
+                header('Location: ' . $this->baseUrl . 'login?error=Invalid email or password');
                 exit;
             }
         }
@@ -97,10 +94,9 @@ class AuthController{
             if ($result === true) {
                 $user_id = $this->userModel->last_added_user_id;
                 $this->studentModel->addStudent($user_id, $level);
-                $_SESSION['success'] = "Account created successfully! Please sign in.";
-                header('Location: ' . $this->baseUrl . 'login');
+                header('Location: ' . $this->baseUrl . 'login?success=Account created successfully! Please sign in.');
                 exit;
-
+                
             } else {
                 $_SESSION['error'] = "Email already exists or something went wrong.";
                 $_SESSION['form_data'] = ['name' => $name, 'email' => $email];

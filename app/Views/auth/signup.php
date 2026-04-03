@@ -61,6 +61,19 @@
             </form>
         </div>
     </main>
-</body>
 
+    <script src="<?= $baseUrl ?>app/Views/js/toast.js"></script>
+    <script>
+        // Check for success/error messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            toast.success(decodeURIComponent(urlParams.get('success')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            toast.error(decodeURIComponent(urlParams.get('error')));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
+</body>
 </html>
