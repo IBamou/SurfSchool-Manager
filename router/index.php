@@ -66,7 +66,7 @@ $router = new Router();
 
 // Landing Page
 $router->get('home', [HomeController::class, 'show']);
-$router->get('', [HomeController::class, 'show']);
+$router->get('/', [HomeController::class, 'show']);
 
 // Auth
 $router->get('login', [AuthController::class, 'login']);
