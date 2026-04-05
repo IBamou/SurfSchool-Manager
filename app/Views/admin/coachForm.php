@@ -57,11 +57,13 @@
                     <label for="speciality">Speciality *</label>
                     <select id="speciality" name="speciality" required>
                         <option value="">Select Speciality</option>
-                        <option value="Beginner" <?= ($coach['speciality'] ?? '') === 'Beginner' ? 'selected' : '' ?>>Beginner Lessons</option>
-                        <option value="Intermediate" <?= ($coach['speciality'] ?? '') === 'Intermediate' ? 'selected' : '' ?>>Intermediate Lessons</option>
-                        <option value="Advanced" <?= ($coach['speciality'] ?? '') === 'Advanced' ? 'selected' : '' ?>>Advanced Lessons</option>
-                        <option value="Competition" <?= ($coach['speciality'] ?? '') === 'Competition' ? 'selected' : '' ?>>Competition Training</option>
-                        <option value="Kids" <?= ($coach['speciality'] ?? '') === 'Kids' ? 'selected' : '' ?>>Kids Special</option>
+                        <option value="Beginner Friendly" <?= ($coach['speciality'] ?? '') === 'Beginner Friendly' ? 'selected' : '' ?>>Beginner Friendly</option>
+                        <option value="Intermediate" <?= ($coach['speciality'] ?? '') === 'Intermediate' ? 'selected' : '' ?>>Intermediate</option>
+                        <option value="Advanced Techniques" <?= ($coach['speciality'] ?? '') === 'Advanced Techniques' ? 'selected' : '' ?>>Advanced Techniques</option>
+                        <option value="All Levels" <?= ($coach['speciality'] ?? '') === 'All Levels' ? 'selected' : '' ?>>All Levels</option>
+                        <option value="Competition Training" <?= ($coach['speciality'] ?? '') === 'Competition Training' ? 'selected' : '' ?>>Competition Training</option>
+                        <option value="Kids & Families" <?= ($coach['speciality'] ?? '') === 'Kids & Families' ? 'selected' : '' ?>>Kids & Families</option>
+                        <option value="Longboard Style" <?= ($coach['speciality'] ?? '') === 'Longboard Style' ? 'selected' : '' ?>>Longboard Style</option>
                     </select>
                 </div>
 
