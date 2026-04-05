@@ -111,6 +111,7 @@ Router::get('auth/logout', [AuthController::class, 'logout']);
 // Dashboard
 Router::get('dashboard', [DashboardController::class, 'dashboard'])
         ->middleware('isLoggedIn');
+        
 // Session
 Router::get('sessions', [SessionsController::class, 'sessions'])
         ->middleware('isLoggedIn');
