@@ -146,7 +146,7 @@
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
                 <a href="<?= $baseUrl ?>profile" class="active">Profile</a>
                 <form action="<?= $baseUrl ?>auth/logout" method="POST">
-                    <button type="submit">Logout</button>
+                    <button type="submit" class="btn btn-primary">Logout</button>
                 </form>
             </nav>
         </div>
