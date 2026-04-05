@@ -101,17 +101,26 @@ Router::get('home', [HomeController::class, 'show']);
 Router::get('/', [HomeController::class, 'show']);
 
 // Auth
-Router::get('login', [AuthController::class, 'login']);
-Router::post('auth/login', [AuthController::class, 'login']);
-Router::get('signup', [AuthController::class, 'signup']);
-Router::post('auth/signup', [AuthController::class, 'signup']);
-Router::get('auth/logout', [AuthController::class, 'logout']);
+Router::get('login', [AuthController::class, 'login'])
+        ->middleware('gest');
+
+Router::post('auth/login', [AuthController::class, 'login'])
+        ->middleware('gest');
+        
+Router::get('signup', [AuthController::class, 'signup'])
+        ->middleware('gest');
+
+Router::post('auth/signup', [AuthController::class, 'signup'])
+        ->middleware('gest');
+
+Router::post('auth/logout', [AuthController::class, 'logout'])
+        ->middleware('gest');
 
 
 // Dashboard
 Router::get('dashboard', [DashboardController::class, 'dashboard'])
         ->middleware('isLoggedIn');
-        
+
 // Session
 Router::get('sessions', [SessionsController::class, 'sessions'])
         ->middleware('isLoggedIn');

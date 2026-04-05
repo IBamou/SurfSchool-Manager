@@ -112,9 +112,11 @@ class AuthController{
     }
 
     public function logout() {
-        $this->authModel->closeSession();
-        header("Location: " . $this->baseUrl . "home");
-        exit;
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->authModel->closeSession();
+            header("Location: " . $this->baseUrl . "home");
+            exit;
+        }
     }
 
     private function render_template(string $template = '', array $data = []) {

@@ -29,5 +29,12 @@ class Middleware {
         }
     }
 
+    public function gest() {
+        if (isset($_SESSION['user'])) {
+            header('Location: ' . $this->baseUrl .'dashboard');
+            exit;
+        }
+    }
+
 
 }

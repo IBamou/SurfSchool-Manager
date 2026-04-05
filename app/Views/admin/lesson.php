@@ -20,7 +20,9 @@
                 <a href="<?= $baseUrl ?>students">Students</a>
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
                 <a href="<?= $baseUrl ?>profile">Profile</a>
-                <a href="<?= $baseUrl ?>auth/logout">Logout</a>
+                <form action="<?= $baseUrl ?>auth/logout" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
             </nav>
         </div>
     </header>
