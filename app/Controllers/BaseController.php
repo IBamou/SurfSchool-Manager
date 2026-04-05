@@ -68,10 +68,14 @@ abstract class BaseController {
     }
 
     /**
-     * Redirect to URL (relative to base)
+     * Redirect to URL (relative to base or absolute)
      */
     protected function redirect(string $url): void {
-        header('Location: ' . $this->baseUrl . $url);
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            header('Location: ' . $url);
+        } else {
+            header('Location: ' . $this->baseUrl . $url);
+        }
         exit;
     }
 
