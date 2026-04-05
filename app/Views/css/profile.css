@@ -6,6 +6,29 @@
     box-shadow: 0 10px 40px var(--shadow);
 }
 
+/* Navigation Logout Button */
+nav form {
+    display: inline;
+}
+
+nav .nav-btn {
+    padding: 0.5rem 1.2rem;
+    background: var(--off-white);
+    color: var(--text-gray);
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+nav .nav-btn:hover {
+    background: var(--ocean-light);
+    color: var(--white);
+    border-color: var(--ocean-light);
+}
+
 /* Form Button Styling */
 .form-section .btn {
     width: 100%;

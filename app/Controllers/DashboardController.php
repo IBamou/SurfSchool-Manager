@@ -7,20 +7,9 @@ use App\Models\StudentModel;
 use App\Models\AssignmentModel;
 use App\Models\CoachModel;
 
-class DashboardController {
-    public $baseUrl;
+class DashboardController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function dashboard() {
+    public function dashboard(): void {
         $userRole = $_SESSION['user']['role'] ?? 'user';
 
         if ($userRole === 'admin') {
@@ -30,31 +19,25 @@ class DashboardController {
         }
     }
 
-    public function index() {
+    private function index(): void {
         $lessonModel = new LessonModel();
         $sessionModel = new SessionModel();
         $studentModel = new StudentModel();
         $assignmentModel = new AssignmentModel();
         $coachModel = new CoachModel();
 
-        $totalLessons = count($lessonModel->getLessons());
-        $totalSessions = count($sessionModel->getSessions());
         $studentModel->generateStatistics();
-        $totalStudents = $studentModel->totalStudents;
-        $totalAssignments = count($assignmentModel->getAllAssignments());
-        $totalCoaches = count($coachModel->getCoaches());
 
-        $this->render_template('dashboard', [
-            'baseUrl' => $this->baseUrl,
-            'totalLessons' => $totalLessons,
-            'totalSessions' => $totalSessions,
-            'totalStudents' => $totalStudents,
-            'totalAssignments' => $totalAssignments,
-            'totalCoaches' => $totalCoaches
-        ], 'admin');
+        $this->renderAdmin('dashboard', [
+            'totalLessons' => count($lessonModel->getLessons()),
+            'totalSessions' => count($sessionModel->getSessions()),
+            'totalStudents' => $studentModel->totalStudents,
+            'totalAssignments' => count($assignmentModel->getAllAssignments()),
+            'totalCoaches' => count($coachModel->getCoaches())
+        ]);
     }
 
-    private function studentDashboard() {
+    private function studentDashboard(): void {
         $assignmentModel = new AssignmentModel();
         $sessionModel = new SessionModel();
 
@@ -83,25 +66,20 @@ class DashboardController {
             }
         }
 
-        $lessonModel = new LessonModel();
-        $recommendedLessons = $lessonModel->getLessons();
-
-        $this->render_template('studentDashboard', [
-            'baseUrl' => $this->baseUrl,
+        $this->renderStudent('studentDashboard', [
             'user' => $_SESSION['user'],
             'mySessions' => $mySessions,
             'enrolledSessions' => $enrolledSessions,
             'completedSessions' => $completedSessions,
             'totalSpent' => $totalSpent,
-            'recommendedLessons' => $recommendedLessons
-        ], 'student');
+            'recommendedLessons' => (new LessonModel())->getLessons()
+        ]);
     }
 
-    private function render_template(string $template = '', array $data = [], string $folder = '') {
-        if ($template) {
-            extract($data);
-            include '../app/Views/' . $folder . '/' . $template . '.php';
-            exit;
-        }
+    protected function renderStudent(string $template, array $data = []): void {
+        $data['baseUrl'] = $this->baseUrl;
+        extract($data);
+        include '../app/Views/student/' . $template . '.php';
+        exit;
     }
 }

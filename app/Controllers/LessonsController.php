@@ -4,65 +4,47 @@ namespace App\Controllers;
 use App\Models\LessonModel;
 use App\Models\SessionModel;
 
-class LessonsController {
-    public $baseUrl;
+class LessonsController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function index() {
+    public function index(): void {
         $model = new LessonModel();
         
         $search = $_GET['search'] ?? '';
         $level = $_GET['level'] ?? '';
 
-        // Search even if search is empty but level filter is applied
         if (!empty($search) || !empty($level)) {
             $lessons = $model->searchLessons($search, $level);
         } else {
             $lessons = $model->getLessons();
         }
 
-        $data = [
+        $this->renderAdmin('lessons', [
             'siteName' => 'Surf Lessons',
-            'baseUrl' => $this->baseUrl,
             'lessons' => $lessons
-        ];
-
-        $this->render_template('lessons', $data);
+        ]);
     }
 
-    public function show(int $id = 0) {
+    public function show(int $id = 0): void {
         if (!empty($id) && is_numeric($id) && $id > 0) {
             $model = new LessonModel();
             $sessionModel = new SessionModel();
             
             $lesson = $model->getLesson($id);
-            $sessions = $sessionModel->getSessionByLesson($id);
             
             if ($lesson) {
-                $this->render_template('lesson', [
-                    'baseUrl' => $this->baseUrl,
+                $this->renderAdmin('lesson', [
                     'lesson' => $lesson,
-                    'sessions' => $sessions
+                    'sessions' => $sessionModel->getSessionByLesson($id)
                 ]);
             } else {
-                header("Location: " . $this->baseUrl . "lessons");
-                exit;
+                $this->redirect('lessons');
             }
         } else {
             $this->index();
         }
     }
 
-    public function add() {
+    public function add(): void {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $model = new LessonModel();
             
@@ -73,22 +55,17 @@ class LessonsController {
             ];
             
             if (empty($data["title"])) {
-                header("Location: " . $this->baseUrl . "lessons/add?error=Title is required");
-                exit;
+                $this->redirectWithError('lessons/add', 'Title is required');
             }
             
             $model->addLesson($data);
-            header("Location: " . $this->baseUrl . "lessons");
-            exit;
+            $this->redirect('lessons');
         }
 
-        $this->render_template('lessonForm', [
-            'baseUrl' => $this->baseUrl,
-            'isEditing' => false
-        ]);
+        $this->renderAdmin('lessonForm', ['isEditing' => false]);
     }
 
-    public function edit(int $id) {
+    public function edit(int $id): void {
         $model = new LessonModel();
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -99,45 +76,33 @@ class LessonsController {
             ];
             
             if (empty($data["title"])) {
-                header("Location: " . $this->baseUrl . "lessons/" . $id . "/edit?error=Title is required");
-                exit;
+                $this->redirectWithError('lessons/edit/' . $id, 'Title is required');
             }
             
             $model->updateLesson($id, $data);
-            header("Location: " . $this->baseUrl . "lessons/" . $id);
-            exit;
+            $this->redirect('lessons/' . $id);
         }
 
         $lesson = $model->getLesson($id);
         
         if (!$lesson) {
-            header("Location: " . $this->baseUrl . "lessons");
-            exit;
+            $this->redirect('lessons');
         }
         
-        $this->render_template('lessonForm', [
-            'baseUrl' => $this->baseUrl,
+        $this->renderAdmin('lessonForm', [
             'isEditing' => true,
             'lesson' => $lesson
         ]);
     }
 
-    public function delete(int $id) {
+    public function delete(int $id): void {
         $model = new LessonModel();            
         $result = $model->deleteLesson($id);
+        
         if ($result) {
-            header("Location: " . $this->baseUrl . "lessons?success=Lesson deleted successfully");
+            $this->redirectWithSuccess('lessons', 'Lesson deleted successfully');
         } else {
-            header("Location: " . $this->baseUrl . "lessons?error=Failed to delete lesson");
-        }
-        exit;
-    }
-
-    private function render_template(string $template = '', array $data = []) {
-        if ($template) {
-            extract($data);
-            include '../app/Views/admin/' . $template . '.php';
-            exit;
+            $this->redirectWithError('lessons', 'Failed to delete lesson');
         }
     }
 }

@@ -62,28 +62,6 @@
             }
         }
 
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: var(--ocean-blue);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--ocean-deep);
-            transform: translateY(-2px);
-        }
-
         .alert {
             padding: 1rem;
             border-radius: 8px;
@@ -146,7 +124,7 @@
                 <a href="<?= $baseUrl ?>coaches">Coaches</a>
                 <a href="<?= $baseUrl ?>profile" class="active">Profile</a>
                 <form action="<?= $baseUrl ?>auth/logout" method="POST">
-                    <button type="submit" class="btn btn-primary">Logout</button>
+                    <button type="submit" class="nav-btn">Logout</button>
                 </form>
             </nav>
         </div>

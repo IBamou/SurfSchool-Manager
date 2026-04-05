@@ -5,72 +5,48 @@ use App\Models\SessionModel;
 use App\Models\AssignmentModel;
 use App\Models\StudentModel;
 
-class BookingController {
-    public $baseUrl;
+class BookingController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function book(int $id) {
+    public function book(int $id): void {
         $model = new SessionModel();
         $session = $model->getSession($id);
         
         if (!$session || $session['status'] !== 'available' || $session['spots_available'] <= 0) {
-            header("Location: " . $this->baseUrl . "sessions/" . $id . "?error=unavailable");
-            exit;
+            $this->redirectWithError('sessions/' . $id, 'Session is unavailable');
         }
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $studentId = (int)($_POST["student_id"] ?? 0);
             
             if (empty($studentId)) {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "/book?error=Student required");
-                exit;
+                $this->redirectWithError('sessions/' . $id . '/book', 'Student required');
             }
             
             $assignmentModel = new AssignmentModel();
             $result = $assignmentModel->assignStudent($id, $studentId);
             
             if ($result) {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "?success=booked");
+                $this->redirectWithSuccess('sessions/' . $id, 'Student booked successfully');
             } else {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "?error=booking_failed");
+                $this->redirectWithError('sessions/' . $id, 'Booking failed');
             }
-            exit;
         }
         
         $studentModel = new StudentModel();
-        $students = $studentModel->getStudents();
-        $this->render_template('sessionBook', [
-            'baseUrl' => $this->baseUrl,
+        $this->renderAdmin('sessionBook', [
             'session' => $session,
-            'students' => $students
+            'students' => $studentModel->getStudents()
         ]);
     }
 
-    public function cancelBooking(int $assignmentId, int $sessionId) {
+    public function cancelBooking(int $assignmentId, int $sessionId): void {
         $assignmentModel = new AssignmentModel();
         $result = $assignmentModel->removeAssignment($assignmentId);
+        
         if ($result) {
-            header("Location: " . $this->baseUrl . "sessions/" . $sessionId . "?success=Student removed from session");
+            $this->redirectWithSuccess('sessions/' . $sessionId, 'Student removed from session');
         } else {
-            header("Location: " . $this->baseUrl . "sessions/" . $sessionId . "?error=Failed to remove student");
-        }
-        exit;
-    }
-
-    private function render_template(string $template = '', array $data = []) {
-        if ($template) {
-            extract($data);
-            include '../app/Views/admin/' . $template . '.php';
-            exit;
+            $this->redirectWithError('sessions/' . $sessionId, 'Failed to remove student');
         }
     }
 }

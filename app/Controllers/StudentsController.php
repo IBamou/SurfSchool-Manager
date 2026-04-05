@@ -3,90 +3,63 @@ namespace App\Controllers;
 
 use App\Models\StudentModel;
 
-class StudentsController {
-    public $baseUrl;
+class StudentsController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function index() {
+    public function index(): void {
         $model = new StudentModel();
-        
         $model->generateStatistics();
-        $students = $model->getStudents();
 
-        $data = [
-            'baseUrl' => $this->baseUrl,
+        $this->renderAdmin('students', [
             'totalStudents' => $model->totalStudents,
             'beginnerCount' => $model->beginnerCount,
             'intermediateCount' => $model->intermediateCount,
             'advancedCount' => $model->advancedCount,
-            'students' => $students
-        ];
-
-        $this->render_template('students', $data);
+            'students' => $model->getStudents()
+        ]);
     }
 
-    public function show(int $id = 0) {
+    public function show(int $id = 0): void {
         if (!empty($id) && is_numeric($id) && $id > 0) {
             $model = new StudentModel();
-            
             $student = $model->getStudent($id);
             
             if ($student) {
-                $assignments = $model->getStudentAssignments($id);
-                
-                $this->render_template('student', [
-                    'baseUrl' => $this->baseUrl,
+                $this->renderAdmin('student', [
                     'student' => $student,
-                    'assignments' => $assignments
+                    'assignments' => $model->getStudentAssignments($id)
                 ]);
             } else {
-                header("Location: " . $this->baseUrl . "students");
-                exit;
+                $this->redirect('students');
             }
         } else {
             $this->index();
         }
     }
 
-    public function edit(int $id) {
+    public function edit(int $id): void {
         $model = new StudentModel();
         $student = $model->getStudent($id);
         
         if (!$student) {
-            header("Location: " . $this->baseUrl . "students");
-            exit;
+            $this->redirect('students');
         }
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $level = $_POST['level'] ?? 'Beginner';
             $model->updateStudentLevel($id, $level);
-            header("Location: " . $this->baseUrl . "students/" . $id);
-            exit;
+            $this->redirect('students/' . $id);
         }
 
-        $this->render_template('studentForm', [
-            'baseUrl' => $this->baseUrl,
-            'student' => $student
-        ]);
+        $this->renderAdmin('studentForm', ['student' => $student]);
     }
 
-    public function updatePayment(int $assignmentId, int $studentId) {
+    public function updatePayment(int $assignmentId, int $studentId): void {
         header('Content-Type: application/json');
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $model = new StudentModel();
             $status = $_POST['payment_status'] ?? 'pending';
             $result = $model->updatePaymentStatus($assignmentId, $status);
-            
             echo json_encode(['success' => $result]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Invalid request method']);
@@ -94,26 +67,17 @@ class StudentsController {
         exit;
     }
 
-    public function updateLevel(int $id) {
+    public function updateLevel(int $id): void {
         header('Content-Type: application/json');
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $model = new StudentModel();
             $level = $_POST['level'] ?? 'Beginner';
             $result = $model->updateStudentLevel($id, $level);
-            
             echo json_encode(['success' => $result]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Invalid request method']);
         }
         exit;
-    }
-
-    private function render_template(string $template = '', array $data = []) {
-        if ($template) {
-            extract($data);
-            include '../app/Views/admin/' . $template . '.php';
-            exit;
-        }
     }
 }

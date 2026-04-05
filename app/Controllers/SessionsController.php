@@ -6,20 +6,9 @@ use App\Models\LessonModel;
 use App\Models\CoachModel;
 use App\Models\AssignmentModel;
 
-class SessionsController {
-    public $baseUrl;
+class SessionsController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function sessions() {
+    public function sessions(): void {
         $userRole = $_SESSION['user']['role'] ?? 'user';
 
         if ($userRole === 'admin') {
@@ -29,16 +18,14 @@ class SessionsController {
         }
     }
 
-    public function studentSessions() {
+    private function studentSessions(): void {
         $assignmentModel = new AssignmentModel();
         $sessionModel = new SessionModel();
         
         $studentId = $_SESSION['student']['id'];
-        
-        $assignments = $assignmentModel->getStudentAssignments($studentId);
         $sessions = [];
         
-        foreach ($assignments as $assignment) {
+        foreach ($assignmentModel->getStudentAssignments($studentId) as $assignment) {
             $session = $sessionModel->getSession($assignment['session_id']);
             if ($session) {
                 $session['payment_status'] = $assignment['payment_status'];
@@ -46,20 +33,15 @@ class SessionsController {
             }
         }
 
-        $this->render_template('studentSessions', [
-            'baseUrl' => $this->baseUrl,
-            'sessions' => $sessions
-        ], 'student');
+        $this->renderStudent('studentSessions', ['sessions' => $sessions]);
     }
 
-    public function index() {
+    private function index(): void {
         $model = new SessionModel();
         $lessonModel = new LessonModel();
         $coachModel = new CoachModel();
         
         $model->generateStatistics();
-        $lessons = $lessonModel->getLessons();
-        $coaches = $coachModel->getCoaches();
         
         $search = $_GET['search'] ?? '';
         $level = $_GET['level'] ?? '';
@@ -74,48 +56,38 @@ class SessionsController {
             $sessions = $model->getSessions();
         }
 
-        $data = [
+        $this->renderAdmin('sessions', [
             'siteName' => 'Surf Sessions',
-            'baseUrl' => $this->baseUrl,
             'totalSessions' => $model->totalSessions,
             'availableSessions' => $model->availableSessions,
             'completedSessions' => $model->completedSessions,
             'sessions' => $sessions,
-            'lessons' => $lessons,
-            'coaches' => $coaches
-        ];
-
-        $this->render_template('sessions', $data, 'admin');
+            'lessons' => $lessonModel->getLessons(),
+            'coaches' => $coachModel->getCoaches()
+        ]);
     }
 
-    public function show(int $id = 0) {
+    public function show(int $id = 0): void {
         if (!empty($id) && is_numeric($id) && $id > 0) {
             $model = new SessionModel();
-            $assignmentModel = new AssignmentModel();
-            
             $session = $model->getSession($id);
-            $assignments = $assignmentModel->getSessionAssignments($id);
             
             if ($session) {
-                $this->render_template('session', [
-                    'baseUrl' => $this->baseUrl,
+                $this->renderAdmin('session', [
                     'session' => $session,
-                    'assignments' => $assignments
-                ], 'admin');
+                    'assignments' => (new AssignmentModel())->getSessionAssignments($id)
+                ]);
             } else {
-                header("Location: " . $this->baseUrl . "sessions");
-                exit;
+                $this->redirect('sessions');
             }
         } else {
             $this->index();
         }
     }
 
-    public function add() {
+    public function add(): void {
         $lessonModel = new LessonModel();
         $coachModel = new CoachModel();
-        $lessons = $lessonModel->getLessons();
-        $coaches = $coachModel->getCoaches();
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $model = new SessionModel();
@@ -134,41 +106,36 @@ class SessionsController {
             ];
             
             if (empty($data["lesson_id"]) || empty($data["coach_id"])) {
-                header("Location: " . $this->baseUrl . "sessions/add?error=Lesson and Coach are required");
-                exit;
+                $this->redirectWithError('sessions/add', 'Lesson and Coach are required');
             }
             
             $model->addSession($data);
             unset($_SESSION["lesson_id"]);
-            header("Location: " . $this->baseUrl . "sessions");
-            exit;
+            $this->redirect('sessions');
         }
+        
         if (isset($_GET["lesson_id"])) {
             $_SESSION["lesson_id"] = $_GET["lesson_id"];
         }
-        $this->render_template('sessionForm', [
-            'baseUrl' => $this->baseUrl,
-            'lessons' => $lessons,
-            'coaches' => $coaches,
+        
+        $this->renderAdmin('sessionForm', [
+            'lessons' => $lessonModel->getLessons(),
+            'coaches' => $coachModel->getCoaches(),
             'isEditing' => false,
-        ], 'admin');
+        ]);
     }
 
-    public function edit(int $id) {
+    public function edit(int $id): void {
         $model = new SessionModel();
+        $session = $model->getSession($id);
+        
+        if (!$session) {
+            $this->redirect('sessions');
+        }
+        
         $lessonModel = new LessonModel();
         $coachModel = new CoachModel();
         $assignmentModel = new AssignmentModel();
-        
-        $lessons = $lessonModel->getLessons();
-        $coaches = $coachModel->getCoaches();
-        $session = $model->getSession($id);
-        $assignments = $assignmentModel->getSessionAssignments($id);
-        
-        if (!$session) {
-            header("Location: " . $this->baseUrl . "sessions");
-            exit;
-        }
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $data = [
@@ -185,41 +152,37 @@ class SessionsController {
             ];
             
             if (empty($data["lesson_id"]) || empty($data["coach_id"])) {
-                header("Location: " . $this->baseUrl . "sessions/" . $id . "/edit?error=Lesson and Coach are required");
-                exit;
+                $this->redirectWithError('sessions/edit/' . $id, 'Lesson and Coach are required');
             }
             
             $model->updateSession($id, $data);
-            header("Location: " . $this->baseUrl . "sessions/" . $id);
-            exit;
+            $this->redirect('sessions/' . $id);
         }
 
-        $this->render_template('sessionForm', [
-            'baseUrl' => $this->baseUrl,
-            'lessons' => $lessons,
-            'coaches' => $coaches,
+        $this->renderAdmin('sessionForm', [
+            'lessons' => $lessonModel->getLessons(),
+            'coaches' => $coachModel->getCoaches(),
             'isEditing' => true,
             'session' => $session,
-            'assignments' => $assignments
-        ], 'admin');
+            'assignments' => $assignmentModel->getSessionAssignments($id)
+        ]);
     }
 
-    public function delete(int $id) {
+    public function delete(int $id): void {
         $model = new SessionModel();            
         $result = $model->deleteSession($id);
+        
         if ($result) {
-            header("Location: " . $this->baseUrl . "sessions?success=Session deleted successfully");
+            $this->redirectWithSuccess('sessions', 'Session deleted successfully');
         } else {
-            header("Location: " . $this->baseUrl . "sessions?error=Failed to delete session");
+            $this->redirectWithError('sessions', 'Failed to delete session');
         }
-        exit;
     }
 
-    private function render_template(string $template = '', array $data = [], string $folder = '') {
-        if ($template) {
-            extract($data);
-            include '../app/Views/' . $folder . '/' . $template . '.php';
-            exit;
-        }
+    private function renderStudent(string $template, array $data = []): void {
+        $data['baseUrl'] = $this->baseUrl;
+        extract($data);
+        include '../app/Views/student/' . $template . '.php';
+        exit;
     }
 }

@@ -22,7 +22,7 @@
                 <a href="<?= $baseUrl ?>coaches" class="active">Coaches</a>
                 <a href="<?= $baseUrl ?>profile">Profile</a>
                 <form action="<?= $baseUrl ?>auth/logout" method="POST">
-                    <button type="submit" class="btn btn-primary">Logout</button>
+                    <button type="submit" class="nav-btn">Logout</button>
                 </form>
             </nav>
         </div>

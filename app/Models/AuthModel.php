@@ -13,7 +13,7 @@ class AuthModel extends Model {
     public $error = false;
     public $validationModel;
 
-    public $hasRun;
+    public $hasRun = false;
 
     public function __construct() {
         parent::__construct();   
@@ -21,49 +21,37 @@ class AuthModel extends Model {
     }
 
     public function setAdmin($name, $email, $password) {
+        if ($this->hasRun) {
+            return true;
+        }
 
-        $this->hasRun = false;
-
-        if (!$this->hasRun) {
-
-            // Hash password
-            if ($this->validationModel->verifyInputs($name, $email, $password)) {
-                die("Invalid inputs");
-            }
-
+        try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            try {
             $this->db->beginTransaction();
 
-            // Demote ALL existing mainadmins and admins (only 1 mainadmin allowed)
-            // $this->db->exec("UPDATE users SET role='user' WHERE role IN ('superAdmin', 'admin')");
-            $stmt = $this->db->prepare("UPDATE users SET role='user'");
+            $stmt = $this->db->prepare("UPDATE users SET role='user' WHERE role IN ('admin', 'mainadmin')");
             $stmt->execute();
 
-            // Check if user exists
             $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
             $stmt->execute([$email]);
-            $userExists = $stmt->rowCount() > 0;
+            $userExists = $stmt->fetch() !== false;
 
             if ($userExists) {
-            // User exists → promote to mainadmin
-            $stmt = $this->db->prepare("UPDATE users SET role='admin' WHERE email = ?");
-            $stmt->execute([$email]);
+                $stmt = $this->db->prepare("UPDATE users SET role='admin' WHERE email = ?");
+                $stmt->execute([$email]);
             } else {
-            // New user → insert as mainadmin
-            $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')");
-            $stmt->execute([$name, $email, $hashedPassword]);
+                $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')");
+                $stmt->execute([$name, $email, $hashedPassword]);
             }
 
             $this->db->commit();
             $this->hasRun = true;
             return true;
 
-            } catch (Exception $e) {
+        } catch (Exception $e) {
             $this->db->rollBack();
             return "Error: " . $e->getMessage();
-            }
         }
     }
 

@@ -4,32 +4,19 @@ namespace App\Controllers;
 use App\Models\CoachModel;
 use App\Models\SessionModel;
 
-class CoachController {
-    public $baseUrl;
+class CoachController extends BaseController {
 
-    public function __construct() {
-        $this->baseUrl = $this->getBaseUrl();
-    }
-    
-    private function getBaseUrl() {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/surfManager/';
-    }
-
-    public function index() {
+    public function index(): void {
         $model = new CoachModel();
         $coaches = $model->getCoaches();
-        $totalCoaches = count($coaches);
 
-        $this->render_template('coaches', [
-            'baseUrl' => $this->baseUrl,
+        $this->renderAdmin('coaches', [
             'coaches' => $coaches,
-            'totalCoaches' => $totalCoaches
+            'totalCoaches' => count($coaches)
         ]);
     }
 
-    public function add() {
+    public function add(): void {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $model = new CoachModel();
             
@@ -42,44 +29,22 @@ class CoachController {
             ];
             
             if (empty($data["name"]) || empty($data["email"]) || empty($data["speciality"])) {
-                header("Location: " . $this->baseUrl . "coaches/add?error=Name, email and speciality are required");
-                exit;
+                $this->redirectWithError('coaches/add', 'Name, email and speciality are required');
             }
             
             $model->addCoach($data);
-            header("Location: " . $this->baseUrl . "coaches");
-            exit;
+            $this->redirect('coaches');
         }
 
-        $this->render_template('coachForm', [
-            'baseUrl' => $this->baseUrl
-        ]);
+        $this->renderAdmin('coachForm');
     }
 
-    public function delete(int $id) {
-        $model = new CoachModel();
-        $sessionModel = new SessionModel();
-        
-        // First, clear the coach from all sessions and set them to pending_coach status
-        $sessionModel->clearCoachFromSessions($id);
-        
-        // Then delete the coach
-        $result = $model->deleteCoach($id);
-        if ($result) {
-            header("Location: " . $this->baseUrl . "coaches?success=Coach deleted successfully");
-        } else {
-            header("Location: " . $this->baseUrl . "coaches?error=Failed to delete coach");
-        }
-        exit;
-    }
-
-    public function edit(int $id) {
+    public function edit(int $id): void {
         $model = new CoachModel();
         $coach = $model->getCoach($id);
 
         if (!$coach) {
-            header("Location: " . $this->baseUrl . "coaches");
-            exit;
+            $this->redirect('coaches');
         }
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -92,51 +57,30 @@ class CoachController {
             ];
             
             if (empty($data["name"]) || empty($data["email"]) || empty($data["speciality"])) {
-                header("Location: " . $this->baseUrl . "coaches/edit/" . $id . "?error=Name, email and speciality are required");
-                exit;
+                $this->redirectWithError('coaches/edit/' . $id, 'Name, email and speciality are required');
             }
             
             $model->updateCoach($id, $data);
-            header("Location: " . $this->baseUrl . "coaches");
-            exit;
+            $this->redirect('coaches');
         }
 
-        $this->render_template('coachForm', [
-            'baseUrl' => $this->baseUrl,
+        $this->renderAdmin('coachForm', [
             'coach' => $coach,
             'isEditing' => true
         ]);
     }
 
-    public function update() {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $model = new CoachModel();
-            
-            $id = (int)($_POST["id"] ?? 0);
-            $data = [
-                "name" => trim($_POST["name"] ?? ''),
-                "email" => trim($_POST["email"] ?? ''),
-                "phone" => trim($_POST["phone"] ?? ''),
-                "speciality" => trim($_POST["speciality"] ?? ''),
-                "experience" => (int)($_POST["experience"] ?? 0),
-            ];
-            
-            if (empty($data["name"]) || empty($data["email"]) || empty($data["speciality"])) {
-                header("Location: " . $this->baseUrl . "coaches/edit/" . $id . "?error=Name, email and speciality are required");
-                exit;
-            }
-            
-            $model->updateCoach($id, $data);
-            header("Location: " . $this->baseUrl . "coaches");
-            exit;
-        }
-    }
-
-    private function render_template(string $template = '', array $data = []) {
-        if ($template) {
-            extract($data);
-            include '../app/Views/admin/' . $template . '.php';
-            exit;
+    public function delete(int $id): void {
+        $model = new CoachModel();
+        $sessionModel = new SessionModel();
+        
+        $sessionModel->clearCoachFromSessions($id);
+        $result = $model->deleteCoach($id);
+        
+        if ($result) {
+            $this->redirectWithSuccess('coaches', 'Coach deleted successfully');
+        } else {
+            $this->redirectWithError('coaches', 'Failed to delete coach');
         }
     }
 }
