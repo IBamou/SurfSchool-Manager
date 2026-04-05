@@ -156,8 +156,8 @@
                 <div class="profile-info">
                     <h1><?= htmlspecialchars($user['name'] ?? 'Student') ?></h1>
                     <p class="profile-email"><?= htmlspecialchars($user['email'] ?? '') ?></p>
-                    <span class="badge badge-<?= strtolower($user['level'] ?? 'beginner') ?>">
-                        <?= htmlspecialchars($user['level'] ?? 'Beginner') ?>
+                    <span class="badge badge-<?= strtolower($student['level'] ?? 'beginner') ?>">
+                         <?= htmlspecialchars($student['level'] ?? 'Beginner') ?>
                     </span>
                 </div>
             </div>
