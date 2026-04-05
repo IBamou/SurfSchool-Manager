@@ -106,16 +106,14 @@ Router::get('login', [AuthController::class, 'login'])
 
 Router::post('auth/login', [AuthController::class, 'login'])
         ->middleware('gest');
-        
+
 Router::get('signup', [AuthController::class, 'signup'])
         ->middleware('gest');
 
 Router::post('auth/signup', [AuthController::class, 'signup'])
         ->middleware('gest');
 
-Router::post('auth/logout', [AuthController::class, 'logout'])
-        ->middleware('gest');
-
+Router::post('auth/logout', [AuthController::class, 'logout']);
 
 // Dashboard
 Router::get('dashboard', [DashboardController::class, 'dashboard'])
